@@ -135,10 +135,17 @@ def render_position_health() -> None:
     stock_data = {}
     for ticker in PERSONAL_POSITIONS.keys():
         if ticker != "ETH":
-            stock_data[ticker] = fetch_stock_data(ticker)
+            data = fetch_stock_data(ticker)
+            stock_data[ticker] = data
 
     # Calculate portfolio metrics
     portfolio = calculate_portfolio_metrics(PERSONAL_POSITIONS, stock_data)
+
+    # Check if we have data
+    has_data = portfolio["total_value"] > 0
+
+    if not has_data:
+        st.warning("Unable to fetch stock data. Yahoo Finance may be rate limiting.")
 
     # Display metrics
     col1, col2, col3 = st.columns(3)
@@ -146,16 +153,17 @@ def render_position_health() -> None:
     with col1:
         st.metric(
             label="Portfolio NAV",
-            value=format_large_number(portfolio["total_value"]),
+            value=format_large_number(portfolio["total_value"]) if has_data else "Loading...",
         )
 
     with col2:
         bmnr = portfolio["positions"].get("BMNR", {})
         bmnr_value = bmnr.get("value", 0)
         bmnr_drawdown = bmnr.get("drawdown")
+        bmnr_price = bmnr.get("price", 0)
         st.metric(
-            label="BMNR Position",
-            value=format_large_number(bmnr_value),
+            label=f"BMNR ({PERSONAL_POSITIONS['BMNR']['shares']:,} shares)",
+            value=format_large_number(bmnr_value) if bmnr_price else "N/A",
             delta=format_percentage(bmnr_drawdown) if bmnr_drawdown else None,
             delta_color="inverse" if bmnr_drawdown and bmnr_drawdown < 0 else "normal",
         )
@@ -164,9 +172,10 @@ def render_position_health() -> None:
         sbet = portfolio["positions"].get("SBET", {})
         sbet_value = sbet.get("value", 0)
         sbet_drawdown = sbet.get("drawdown")
+        sbet_price = sbet.get("price", 0)
         st.metric(
-            label="SBET Position",
-            value=format_large_number(sbet_value),
+            label=f"SBET ({PERSONAL_POSITIONS['SBET']['shares']:,} shares)",
+            value=format_large_number(sbet_value) if sbet_price else "N/A",
             delta=format_percentage(sbet_drawdown) if sbet_drawdown else None,
             delta_color="inverse" if sbet_drawdown and sbet_drawdown < 0 else "normal",
         )
