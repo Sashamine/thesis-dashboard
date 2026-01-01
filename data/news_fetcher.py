@@ -163,6 +163,15 @@ def fetch_cointelegraph_news() -> List[Dict[str, Any]]:
         return []
 
 
+def make_naive(dt):
+    """Convert datetime to naive (remove timezone info)"""
+    if dt is None:
+        return datetime.min
+    if hasattr(dt, 'tzinfo') and dt.tzinfo is not None:
+        return dt.replace(tzinfo=None)
+    return dt
+
+
 @st.cache_data(ttl=600)  # 10 minute cache
 def fetch_all_dat_news() -> List[Dict[str, Any]]:
     """Aggregate news from all sources"""
@@ -196,8 +205,8 @@ def fetch_all_dat_news() -> List[Dict[str, Any]]:
             seen_urls.add(url)
             unique_news.append(item)
 
-    # Sort by date (newest first)
-    unique_news.sort(key=lambda x: x.get("date", datetime.min), reverse=True)
+    # Sort by date (newest first) - convert to naive datetime for comparison
+    unique_news.sort(key=lambda x: make_naive(x.get("date", datetime.min)), reverse=True)
 
     return unique_news[:30]  # Return top 30
 
@@ -240,16 +249,25 @@ def fetch_lookonchain_mentions() -> List[Dict[str, Any]]:
 
 def get_time_ago(dt: datetime) -> str:
     """Convert datetime to relative time string"""
-    now = datetime.now(dt.tzinfo) if dt.tzinfo else datetime.now()
-    diff = now - dt
+    if dt is None:
+        return ""
 
-    if diff.days > 7:
-        return dt.strftime("%b %d")
-    elif diff.days > 0:
-        return f"{diff.days}d ago"
-    elif diff.seconds > 3600:
-        return f"{diff.seconds // 3600}h ago"
-    elif diff.seconds > 60:
-        return f"{diff.seconds // 60}m ago"
-    else:
-        return "just now"
+    # Make both naive for comparison
+    dt_naive = make_naive(dt)
+    now = datetime.now()
+
+    try:
+        diff = now - dt_naive
+
+        if diff.days > 7:
+            return dt_naive.strftime("%b %d")
+        elif diff.days > 0:
+            return f"{diff.days}d ago"
+        elif diff.seconds > 3600:
+            return f"{diff.seconds // 3600}h ago"
+        elif diff.seconds > 60:
+            return f"{diff.seconds // 60}m ago"
+        else:
+            return "just now"
+    except:
+        return dt_naive.strftime("%b %d") if dt_naive else ""
