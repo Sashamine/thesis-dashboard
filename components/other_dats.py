@@ -64,6 +64,9 @@ def build_dat_dataframe(companies: Dict[str, Any], asset_price: float) -> pd.Dat
         stock_price = stock.get("price", 0) or 0
         market_cap = stock.get("market_cap", 0) or 0
 
+        # mNAV = Market Cap / NAV (treasury value)
+        mnav = market_cap / treasury_value if treasury_value > 0 else 0
+
         rows.append({
             "Ticker": ticker,
             "Company": company["name"],
@@ -79,6 +82,7 @@ def build_dat_dataframe(companies: Dict[str, Any], asset_price: float) -> pd.Dat
             "Annual Yield USD": annual_yield_usd,
             "Stock Price": stock_price,
             "Market Cap": market_cap,
+            "mNAV": mnav,
             "Leader": company.get("leader", ""),
             "Strategy": company.get("strategy", ""),
             "Notes": company.get("notes", ""),
@@ -129,9 +133,10 @@ def render_asset_section(asset: str, companies: Dict[str, Any], asset_price: flo
 
     # Display columns - BTC has no staking
     if is_btc:
+        display_df["mNAV"] = display_df["mNAV"].apply(lambda x: f"{x:.2f}x" if x else "N/A")
         columns_to_show = [
             "Ticker", "Company", "Holdings", "Treasury Value",
-            "Unrealized P&L", "P&L %", "Stock Price"
+            "Market Cap", "mNAV", "Stock Price"
         ]
     else:
         display_df["Staked %"] = display_df["Staked %"].apply(lambda x: f"{x*100:.0f}%")
@@ -154,15 +159,19 @@ def render_asset_section(asset: str, companies: Dict[str, Any], asset_price: flo
     total_pnl = df["Unrealized P&L"].sum()
 
     if is_btc:
-        # BTC: No staking yield, show P&L instead
-        col1, col2, col3 = st.columns(3)
+        # BTC: Show mNAV metrics
+        total_market_cap = df["Market Cap"].sum()
+        # Aggregate mNAV = Total Market Cap / Total NAV
+        agg_mnav = total_market_cap / total_value if total_value > 0 else 0
+        col1, col2, col3, col4 = st.columns(4)
         with col1:
             st.metric(f"Total {asset}", f"{total_holdings:,.0f}")
         with col2:
             st.metric("Treasury Value", format_large_number(total_value))
         with col3:
-            pnl_label = f"+{format_large_number(total_pnl)}" if total_pnl >= 0 else format_large_number(total_pnl)
-            st.metric("Unrealized P&L", pnl_label)
+            st.metric("Market Cap", format_large_number(total_market_cap))
+        with col4:
+            st.metric("Aggregate mNAV", f"{agg_mnav:.2f}x")
     else:
         # PoS chains: Show staking yield
         total_yield = df["Annual Yield"].sum()
