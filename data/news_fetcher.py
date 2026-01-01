@@ -6,8 +6,44 @@ import requests
 import re
 from datetime import datetime, timedelta
 from typing import List, Dict, Any, Optional
+from email.utils import parsedate_to_datetime
 import streamlit as st
 from bs4 import BeautifulSoup
+
+
+def parse_rss_date(date_str: str) -> datetime:
+    """Parse RSS date string robustly"""
+    if not date_str:
+        return datetime.now()
+
+    # Try email.utils parser first (handles RFC 2822 format used by RSS)
+    try:
+        dt = parsedate_to_datetime(date_str)
+        # Convert to naive datetime
+        return dt.replace(tzinfo=None)
+    except:
+        pass
+
+    # Try common formats
+    formats = [
+        "%a, %d %b %Y %H:%M:%S %z",
+        "%a, %d %b %Y %H:%M:%S %Z",
+        "%Y-%m-%dT%H:%M:%S%z",
+        "%Y-%m-%dT%H:%M:%SZ",
+        "%Y-%m-%d %H:%M:%S",
+        "%Y-%m-%d",
+    ]
+
+    for fmt in formats:
+        try:
+            dt = datetime.strptime(date_str, fmt)
+            if dt.tzinfo:
+                dt = dt.replace(tzinfo=None)
+            return dt
+        except:
+            continue
+
+    return datetime.now()
 
 # Keywords to filter for DAT-related news
 DAT_KEYWORDS = [
@@ -53,17 +89,14 @@ def fetch_google_news(query: str, num_results: int = 10) -> List[Dict[str, Any]]
             source = item.find('source').text if item.find('source') else ""
 
             # Parse date
-            try:
-                parsed_date = datetime.strptime(pub_date, "%a, %d %b %Y %H:%M:%S %Z")
-            except:
-                parsed_date = datetime.now()
+            parsed_date = parse_rss_date(pub_date)
 
             news.append({
                 "title": title,
                 "url": link,
                 "source": source,
                 "date": parsed_date,
-                "date_str": parsed_date.strftime("%b %d, %Y %H:%M"),
+                "date_str": parsed_date.strftime("%b %d, %Y"),
             })
 
         return news
@@ -94,13 +127,7 @@ def fetch_coindesk_news() -> List[Dict[str, Any]]:
             is_relevant = any(kw.lower() in content for kw in DAT_KEYWORDS)
 
             if is_relevant:
-                try:
-                    parsed_date = datetime.strptime(pub_date, "%a, %d %b %Y %H:%M:%S %z")
-                except:
-                    try:
-                        parsed_date = datetime.strptime(pub_date, "%a, %d %b %Y %H:%M:%S %Z")
-                    except:
-                        parsed_date = datetime.now()
+                parsed_date = parse_rss_date(pub_date)
 
                 news.append({
                     "title": title,
@@ -145,10 +172,7 @@ def fetch_cointelegraph_news() -> List[Dict[str, Any]]:
 
             # Check if relevant
             if any(kw.lower() in title.lower() for kw in DAT_KEYWORDS):
-                try:
-                    parsed_date = datetime.strptime(pub_date, "%a, %d %b %Y %H:%M:%S %z")
-                except:
-                    parsed_date = datetime.now()
+                parsed_date = parse_rss_date(pub_date)
 
                 news.append({
                     "title": title,
