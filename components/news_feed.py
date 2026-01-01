@@ -10,6 +10,12 @@ from data.news_fetcher import (
     fetch_lookonchain_mentions,
     get_time_ago,
 )
+from data.edgar_fetcher import (
+    fetch_all_dat_filings,
+    fetch_company_edgar,
+    get_filing_type_description,
+    get_filing_type_emoji,
+)
 
 
 def render_news_item(item: Dict[str, Any], show_source: bool = True) -> None:
@@ -124,31 +130,104 @@ def render_news_sidebar() -> None:
         st.caption(f"*{time_str}*")
 
 
+def render_sec_filing(filing: Dict[str, Any]) -> None:
+    """Render a single SEC filing"""
+    emoji = get_filing_type_emoji(filing.get("form_type", ""))
+    form_type = filing.get("form_type", "")
+    ticker = filing.get("ticker", "")
+    company = filing.get("company", "")
+    url = filing.get("url", "")
+    date_str = filing.get("date_str", "")
+    description = get_filing_type_description(form_type)
+
+    col1, col2 = st.columns([4, 1])
+
+    with col1:
+        st.markdown(f"{emoji} **[{ticker}: {form_type}]({url})** - {description}")
+        if company:
+            st.caption(company)
+
+    with col2:
+        st.caption(date_str)
+
+
+def render_sec_filings_feed(max_items: int = 20) -> None:
+    """Render SEC filings feed for all DAT companies"""
+    st.subheader("SEC EDGAR Filings")
+
+    col1, col2 = st.columns([4, 1])
+    with col2:
+        if st.button("Refresh", key="refresh_edgar"):
+            st.cache_data.clear()
+            st.rerun()
+
+    with st.spinner("Loading SEC filings..."):
+        filings = fetch_all_dat_filings(count_per_company=5)
+
+    if not filings:
+        st.info("No SEC filings found. Some companies may not have CIK numbers configured.")
+        st.caption("Companies with SEC data: SBET, BTBT, BTCS, GAME, FGNX")
+        return
+
+    for i, filing in enumerate(filings[:max_items]):
+        render_sec_filing(filing)
+        if i < len(filings[:max_items]) - 1:
+            st.markdown("---")
+
+
+def render_company_sec_filings(ticker: str, max_items: int = 10) -> None:
+    """Render SEC filings for a specific company"""
+    st.subheader(f"{ticker} SEC Filings")
+
+    with st.spinner(f"Loading {ticker} SEC filings..."):
+        filings = fetch_company_edgar(ticker, max_items)
+
+    if not filings:
+        st.info(f"No SEC filings found for {ticker}. CIK may not be configured.")
+        return
+
+    for i, filing in enumerate(filings):
+        render_sec_filing(filing)
+        if i < len(filings) - 1:
+            st.divider()
+
+
 def render_news_page() -> None:
     """Render the full news page"""
     st.title("News & Announcements")
     st.markdown("*Latest updates on ETH treasury companies*")
 
     # Tabs for different views
-    tab1, tab2, tab3 = st.tabs(["All News", "By Company", "Key Sources"])
+    tab1, tab2, tab3, tab4 = st.tabs(["All News", "SEC Filings", "By Company", "Key Sources"])
 
     with tab1:
         render_news_feed(max_items=20)
 
     with tab2:
-        ticker = st.selectbox(
-            "Select Company",
-            options=["BMNR", "SBET", "ETHM", "BTBT", "BTCS", "ETHZ", "GAME", "FGNX"],
-        )
-        render_company_news(ticker, max_items=10)
+        render_sec_filings_feed(max_items=25)
 
     with tab3:
+        col1, col2 = st.columns(2)
+        with col1:
+            ticker = st.selectbox(
+                "Select Company",
+                options=["BMNR", "SBET", "ETHM", "BTBT", "BTCS", "ETHZ", "GAME", "FGNX"],
+            )
+
+        st.markdown("---")
+        st.subheader("News")
+        render_company_news(ticker, max_items=10)
+
+        st.markdown("---")
+        render_company_sec_filings(ticker, max_items=10)
+
+    with tab4:
         st.subheader("Key Sources to Monitor")
 
         st.markdown("""
         **Real-time (minutes)**
         - [@lookonchain](https://twitter.com/lookonchain) - Whale wallet tracking
-        - [@arkaboratory](https://twitter.com/ArkhamIntel) - On-chain intelligence
+        - [@ArkhamIntel](https://twitter.com/ArkhamIntel) - On-chain intelligence
 
         **Same-day**
         - [The Block Treasuries](https://theblock.co/treasuries/ethereum-treasuries)
@@ -156,11 +235,14 @@ def render_news_page() -> None:
         - [strategicethreserve.xyz](https://strategicethreserve.xyz)
 
         **Company IR / Twitter**
-        - [@Bitmine_BMNR](https://twitter.com/bitaboratory_bmnr) - Weekly updates
+        - [@Bitmine_BMNR](https://twitter.com/Bitmine_BMNR) - Weekly updates
         - [@SharpLinkGaming](https://twitter.com/SharpLinkGaming)
 
-        **Quarterly (SEC Filings)**
-        - [SEC EDGAR](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&type=10)
+        **SEC EDGAR (Quarterly)**
+        - [SEC EDGAR Search](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany)
+        - [SBET Filings](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001784851)
+        - [BTBT Filings](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001799290)
+        - [BTCS Filings](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001436229)
         """)
 
         st.markdown("---")
