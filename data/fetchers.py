@@ -56,11 +56,8 @@ def fetch_eth_treasury_companies() -> List[Dict[str, Any]]:
         return []
 
 
-@st.cache_data(ttl=STOCK_CACHE_TTL)
-def fetch_stock_data(ticker: str) -> Dict[str, Any]:
-    """Fetch stock data from Yahoo Finance with retry logic"""
-    last_error = None
-
+def _fetch_from_yahoo(ticker: str) -> Optional[Dict[str, Any]]:
+    """Fetch stock data from Yahoo Finance"""
     for attempt in range(MAX_RETRIES):
         try:
             stock = yf.Ticker(ticker)
@@ -70,12 +67,11 @@ def fetch_stock_data(ticker: str) -> Dict[str, Any]:
             if not info or len(info) < 5:
                 raise Exception("Empty response - possible rate limit")
 
-            # Get current price and basic info
             current_price = info.get("currentPrice") or info.get("regularMarketPrice")
+            if not current_price:
+                raise Exception("No price data")
 
-            # Get historical data for drawdown calculation
             hist = stock.history(period="1y")
-
             ath_1y = hist["High"].max() if not hist.empty else None
             drawdown = None
             if ath_1y and current_price:
@@ -98,15 +94,129 @@ def fetch_stock_data(ticker: str) -> Dict[str, Any]:
                 "source": "yahoo",
             }
         except Exception as e:
-            last_error = str(e)
             if attempt < MAX_RETRIES - 1:
-                time.sleep(RETRY_DELAY * (attempt + 1))  # Exponential backoff
+                time.sleep(RETRY_DELAY * (attempt + 1))
             continue
+    return None
 
-    # All retries failed - return error with cached hint
+
+def _fetch_from_alpha_vantage(ticker: str, api_key: str) -> Optional[Dict[str, Any]]:
+    """Fetch stock data from Alpha Vantage (free: 25 calls/day)"""
+    if not api_key:
+        return None
+
+    try:
+        url = "https://www.alphavantage.co/query"
+        params = {
+            "function": "GLOBAL_QUOTE",
+            "symbol": ticker,
+            "apikey": api_key,
+        }
+        response = requests.get(url, params=params, timeout=10)
+        response.raise_for_status()
+        data = response.json()
+
+        # Check for rate limit or error
+        if "Note" in data or "Error Message" in data:
+            return None
+
+        quote = data.get("Global Quote", {})
+        if not quote:
+            return None
+
+        price = float(quote.get("05. price", 0))
+        if not price:
+            return None
+
+        return {
+            "ticker": ticker,
+            "price": price,
+            "market_cap": None,  # Not available in free tier
+            "shares_outstanding": None,
+            "pe_ratio": None,
+            "52w_high": float(quote.get("03. high", 0)) or None,
+            "52w_low": float(quote.get("04. low", 0)) or None,
+            "ath_1y": None,
+            "drawdown_from_ath": None,
+            "volume": int(quote.get("06. volume", 0)) or None,
+            "avg_volume": None,
+            "name": ticker,
+            "timestamp": datetime.now().isoformat(),
+            "source": "alpha_vantage",
+        }
+    except Exception:
+        return None
+
+
+def _fetch_from_fmp(ticker: str, api_key: str) -> Optional[Dict[str, Any]]:
+    """Fetch stock data from Financial Modeling Prep (free: 250 calls/day)"""
+    if not api_key:
+        return None
+
+    try:
+        url = f"https://financialmodelingprep.com/api/v3/quote/{ticker}"
+        params = {"apikey": api_key}
+        response = requests.get(url, params=params, timeout=10)
+        response.raise_for_status()
+        data = response.json()
+
+        if not data or isinstance(data, dict) and "Error" in str(data):
+            return None
+
+        quote = data[0] if isinstance(data, list) and len(data) > 0 else None
+        if not quote:
+            return None
+
+        price = quote.get("price", 0)
+        if not price:
+            return None
+
+        return {
+            "ticker": ticker,
+            "price": price,
+            "market_cap": quote.get("marketCap"),
+            "shares_outstanding": quote.get("sharesOutstanding"),
+            "pe_ratio": quote.get("pe"),
+            "52w_high": quote.get("yearHigh"),
+            "52w_low": quote.get("yearLow"),
+            "ath_1y": quote.get("yearHigh"),
+            "drawdown_from_ath": (price - quote.get("yearHigh", price)) / quote.get("yearHigh", price) if quote.get("yearHigh") else None,
+            "volume": quote.get("volume"),
+            "avg_volume": quote.get("avgVolume"),
+            "name": quote.get("name", ticker),
+            "timestamp": datetime.now().isoformat(),
+            "source": "fmp",
+        }
+    except Exception:
+        return None
+
+
+@st.cache_data(ttl=STOCK_CACHE_TTL)
+def fetch_stock_data(ticker: str) -> Dict[str, Any]:
+    """Fetch stock data with automatic fallback between sources"""
+    from config import ALPHA_VANTAGE_KEY, FMP_API_KEY
+
+    # Try sources in order: Yahoo -> FMP -> Alpha Vantage
+    sources = [
+        ("yahoo", lambda: _fetch_from_yahoo(ticker)),
+        ("fmp", lambda: _fetch_from_fmp(ticker, FMP_API_KEY)),
+        ("alpha_vantage", lambda: _fetch_from_alpha_vantage(ticker, ALPHA_VANTAGE_KEY)),
+    ]
+
+    errors = []
+    for source_name, fetch_func in sources:
+        try:
+            result = fetch_func()
+            if result and result.get("price"):
+                return result
+            errors.append(f"{source_name}: no data")
+        except Exception as e:
+            errors.append(f"{source_name}: {str(e)}")
+
+    # All sources failed
     return {
         "ticker": ticker,
-        "error": f"Rate limited after {MAX_RETRIES} attempts: {last_error}",
+        "error": f"All sources failed: {'; '.join(errors)}",
         "price": None,
         "rate_limited": True,
     }

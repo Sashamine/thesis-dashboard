@@ -26,6 +26,8 @@ def get_api_key(key_name: str, default: str = "") -> str:
     return default
 
 FRED_API_KEY = get_api_key("FRED_API_KEY")
+ALPHA_VANTAGE_KEY = get_api_key("ALPHA_VANTAGE_KEY")  # Free: 25 calls/day
+FMP_API_KEY = get_api_key("FMP_API_KEY")  # Free: 250 calls/day
 
 # Edwin's Personal Positions
 PERSONAL_POSITIONS = {
