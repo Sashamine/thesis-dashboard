@@ -228,11 +228,13 @@ DAT_COMPANIES = {
 
 # Solana DAT Companies (for tracking/news only)
 # Burn rates from 10-Q/10-K filings (quarterly opex in USD)
+# Premium methodology: Capital Raised × (Avg Premium / (1 + Avg Premium)) / SOL Price
 SOL_DAT_COMPANIES = {
     "FWDI": {
         "name": "Forward Industries",
         "ticker": "FWDI",
         "tier": 1,
+        "dat_start_date": "2025-04-01",  # Pivot announced ~Q2 2025
         "holdings": 6_921_342,  # Dec 2025
         "asset": "SOL",
         "cost_basis_avg": 232.08,  # per SOL
@@ -240,6 +242,11 @@ SOL_DAT_COMPANIES = {
         "staking_apy": 0.07,  # 6.82-7.01% gross APY
         "quarterly_burn_usd": 3_400_000,  # ~$13.6M annual opex / 4
         "burn_source": "FY 2025 10-K",
+        # Premium issuance: $1.65B PIPE at premium
+        "capital_raised_atm": 0,
+        "capital_raised_pipe": 1_650_000_000,
+        "avg_issuance_premium": 0.25,  # PIPE typically at 20-30% premium
+        "sol_from_premium": 2_640_000,  # $1.65B × (0.25/1.25) / $125
         "leader": "Galaxy, Jump Crypto, Multicoin backed",
         "strategy": "World's largest SOL treasury, validator infrastructure",
         "notes": "Raised $1.65B PIPE. Debt free. Changed ticker from FORD to FWDI.",
@@ -248,6 +255,7 @@ SOL_DAT_COMPANIES = {
         "name": "Solana Company (fka Helius Medical)",
         "ticker": "HSDT",
         "tier": 1,
+        "dat_start_date": "2025-05-01",
         "holdings": 2_200_000,  # Oct 2025 estimate
         "asset": "SOL",
         "cost_basis_avg": 227.00,
@@ -255,6 +263,10 @@ SOL_DAT_COMPANIES = {
         "staking_apy": 0.065,
         "quarterly_burn_usd": 12_000_000,  # $36M Q3 opex (includes bonuses)
         "burn_source": "Q3 2025 10-Q - inflated by PIPE costs",
+        "capital_raised_atm": 0,
+        "capital_raised_pipe": 500_000_000,
+        "avg_issuance_premium": 0.20,
+        "sol_from_premium": 667_000,  # $500M × (0.20/1.20) / $125
         "leader": "Pantera Capital, Summer Capital",
         "strategy": "SOL treasury via Anchorage Digital custody",
         "notes": "Raised $500M. Partnered with Solana Foundation for discounted SOL.",
@@ -263,6 +275,7 @@ SOL_DAT_COMPANIES = {
         "name": "DeFi Development Corp",
         "ticker": "DFDV",
         "tier": 1,
+        "dat_start_date": "2025-04-01",
         "holdings": 2_195_926,  # Oct 2025
         "asset": "SOL",
         "cost_basis_avg": 110.00,
@@ -270,6 +283,11 @@ SOL_DAT_COMPANIES = {
         "staking_apy": 0.114,  # 11.4% organic yield reported
         "quarterly_burn_usd": 1_500_000,  # ~$6M annual (lean ops)
         "burn_source": "Q3 2025 10-Q estimate",
+        # Has $5B ELOC for future raises
+        "capital_raised_atm": 200_000_000,
+        "capital_raised_pipe": 0,
+        "avg_issuance_premium": 0.15,
+        "sol_from_premium": 209_000,  # $200M × (0.15/1.15) / $125
         "leader": "Formerly Janover Inc.",
         "strategy": "First US public company with SOL-focused treasury. Target 1 SPS by Dec 2028.",
         "notes": "$5B ELOC. $4.6M quarterly revenue. Validator operations.",
@@ -278,6 +296,7 @@ SOL_DAT_COMPANIES = {
         "name": "Upexi",
         "ticker": "UPXI",
         "tier": 1,
+        "dat_start_date": "2025-04-01",
         "holdings": 2_106_989,  # Oct 2025
         "asset": "SOL",
         "cost_basis_avg": 157.66,
@@ -285,6 +304,10 @@ SOL_DAT_COMPANIES = {
         "staking_apy": 0.08,  # ~8% yield
         "quarterly_burn_usd": 2_500_000,  # Consumer brands ops + treasury
         "burn_source": "Q1 2026 10-Q",
+        "capital_raised_atm": 100_000_000,
+        "capital_raised_pipe": 200_000_000,
+        "avg_issuance_premium": 0.15,
+        "sol_from_premium": 313_000,  # $300M × (0.15/1.15) / $125
         "leader": "Arthur Hayes (advisory)",
         "strategy": "SOL treasury + consumer brands (Cure Mushrooms, Lucky Tail)",
         "notes": "42% locked SOL at mid-teens discount. $50M buyback approved Nov 2025.",
@@ -293,6 +316,7 @@ SOL_DAT_COMPANIES = {
         "name": "Sol Strategies",
         "ticker": "HODL",  # CSE: HODL, NASDAQ: STKE
         "tier": 2,
+        "dat_start_date": "2024-06-01",  # Earlier than US companies
         "holdings": 526_637,  # Nov 2025
         "asset": "SOL",
         "cost_basis_avg": 130.00,
@@ -300,6 +324,10 @@ SOL_DAT_COMPANIES = {
         "staking_apy": 0.065,
         "quarterly_burn_usd": 1_200_000,  # Canadian small cap ops
         "burn_source": "FY 2025 annual report",
+        "capital_raised_atm": 50_000_000,
+        "capital_raised_pipe": 0,
+        "avg_issuance_premium": 0.10,
+        "sol_from_premium": 36_000,  # $50M × (0.10/1.10) / $125
         "leader": "Canadian company",
         "strategy": "Validator operations, staking provider for VanEck Solana ETF",
         "notes": "3.7M SOL delegated. Selected as VanEck staking provider Nov 2025.",
@@ -307,11 +335,13 @@ SOL_DAT_COMPANIES = {
 }
 
 # Hyperliquid DAT Companies (for tracking/news only)
+# Premium methodology: Capital Raised × (Avg Premium / (1 + Avg Premium)) / HYPE Price
 HYPE_DAT_COMPANIES = {
     "PURR": {
         "name": "Hyperliquid Strategies",
         "ticker": "PURR",
         "tier": 1,
+        "dat_start_date": "2025-12-01",  # Merger closed Dec 2025
         "holdings": 12_600_000,  # Dec 2025 merger close
         "asset": "HYPE",
         "cost_basis_avg": 46.27,  # $583M / 12.6M
@@ -319,6 +349,11 @@ HYPE_DAT_COMPANIES = {
         "staking_apy": 0.05,
         "quarterly_burn_usd": 2_000_000,  # New company, lean ops + Sonnet legacy
         "burn_source": "Estimate - just launched Dec 2025",
+        # SPAC merger - no traditional ATM premium, but got HYPE via deal structure
+        "capital_raised_atm": 0,
+        "capital_raised_pipe": 583_000_000,  # $583M in HYPE contribution
+        "avg_issuance_premium": 0.10,  # SPAC deals typically have modest premium
+        "hype_from_premium": 2_120_000,  # Estimate based on deal structure
         "leader": "David Schamis (CEO), Bob Diamond (Board)",
         "strategy": "HYPE treasury via Sonnet merger. Staking + yield optimization.",
         "notes": "Merged with Sonnet Dec 2025. $888M combined assets. $30M buyback.",
@@ -327,6 +362,7 @@ HYPE_DAT_COMPANIES = {
         "name": "Hyperion DeFi (fka Eyenovia)",
         "ticker": "HYPD",
         "tier": 2,
+        "dat_start_date": "2025-07-01",  # Rebranded Jul 2025
         "holdings": 1_712_195,  # Sep 2025
         "asset": "HYPE",
         "cost_basis_avg": 38.25,
@@ -334,6 +370,10 @@ HYPE_DAT_COMPANIES = {
         "staking_apy": 0.05,
         "quarterly_burn_usd": 1_500_000,  # Small biotech pivot
         "burn_source": "Q2 2025 10-Q estimate",
+        "capital_raised_atm": 0,
+        "capital_raised_pipe": 50_000_000,
+        "avg_issuance_premium": 0.15,
+        "hype_from_premium": 260_000,  # $50M × (0.15/1.15) / $25
         "leader": "First US public HYPE treasury",
         "strategy": "Validator node via Kinetiq. Aims to be largest HYPE holder.",
         "notes": "Raised $50M PIPE. Rebranded from Eyenovia Jul 2025.",
@@ -341,11 +381,13 @@ HYPE_DAT_COMPANIES = {
 }
 
 # BNB DAT Companies (for tracking/news only)
+# Premium methodology: Capital Raised × (Avg Premium / (1 + Avg Premium)) / BNB Price
 BNB_DAT_COMPANIES = {
     "BNC": {
         "name": "BNB Network Company (CEA Industries)",
         "ticker": "BNC",
         "tier": 1,
+        "dat_start_date": "2025-06-01",
         "holdings": 500_000,  # Dec 2025
         "asset": "BNB",
         "cost_basis_avg": 870.00,  # ~$435M for 500K per filing
@@ -353,6 +395,10 @@ BNB_DAT_COMPANIES = {
         "staking_apy": 0.03,
         "quarterly_burn_usd": 3_000_000,  # Treasury ops + legacy CEA
         "burn_source": "FY Q2 2026 10-Q estimate",
+        "capital_raised_atm": 0,
+        "capital_raised_pipe": 500_000_000,
+        "avg_issuance_premium": 0.20,
+        "bnb_from_premium": 119_000,  # $500M × (0.20/1.20) / $700
         "leader": "YZi Labs (CZ family office) backed",
         "strategy": "Target 1% of BNB supply. Largest corporate BNB holder.",
         "notes": "$500M PIPE closed. YZi Labs owns 7% seeking board control. Rights plan adopted Dec 2025.",
@@ -361,6 +407,7 @@ BNB_DAT_COMPANIES = {
         "name": "Windtree Therapeutics",
         "ticker": "WINT",
         "tier": 2,
+        "dat_start_date": "2025-08-01",
         "holdings": 100_000,  # Estimated from $520M commitment
         "asset": "BNB",
         "cost_basis_avg": 650.00,
@@ -368,6 +415,10 @@ BNB_DAT_COMPANIES = {
         "staking_apy": 0.03,
         "quarterly_burn_usd": 4_000_000,  # Biopharma legacy ops
         "burn_source": "10-Q estimate - biopharma overhead",
+        "capital_raised_atm": 0,
+        "capital_raised_pipe": 520_000_000,  # $500M ELOC + $20M
+        "avg_issuance_premium": 0.15,
+        "bnb_from_premium": 97_000,  # $520M × (0.15/1.15) / $700
         "leader": "First US biopharma with BNB treasury",
         "strategy": "$520M commitment for BNB via Kraken custody",
         "notes": "$500M ELOC + $20M from Build & Build Corp. 99% for BNB acquisition.",
@@ -376,6 +427,7 @@ BNB_DAT_COMPANIES = {
         "name": "Nano Labs",
         "ticker": "NA",
         "tier": 2,
+        "dat_start_date": "2025-06-01",
         "holdings": 128_000,  # Jul 2025
         "asset": "BNB",
         "cost_basis_avg": 600.00,
@@ -383,6 +435,10 @@ BNB_DAT_COMPANIES = {
         "staking_apy": 0.03,
         "quarterly_burn_usd": 5_000_000,  # HK chip design + Web3 ops
         "burn_source": "20-F estimate",
+        "capital_raised_atm": 0,
+        "capital_raised_converts": 500_000_000,
+        "avg_issuance_premium": 0.05,  # Converts at lower premium
+        "bnb_from_premium": 34_000,  # $500M × (0.05/1.05) / $700
         "leader": "Hong Kong Web3 infrastructure",
         "strategy": "BNB treasury via convertible notes",
         "notes": "Issued $500M convertible notes (interest-free, 360 days) Jun 2025.",
@@ -390,19 +446,29 @@ BNB_DAT_COMPANIES = {
 }
 
 # Bitcoin DAT Companies (the OG treasury strategy)
-# BTC has no native staking - yield comes from lending, covered calls, or custody rewards
+# Yield sources: Mining production (miners) or Premium issuance (treasury cos)
+# BTC has no native staking - miners produce BTC, treasury cos capture premium
+# Premium methodology same as ETH: Capital Raised × (Avg Premium / (1 + Avg Premium)) / BTC Price
 BTC_DAT_COMPANIES = {
     "MSTR": {
         "name": "MicroStrategy",
         "ticker": "MSTR",
         "tier": 1,
+        "dat_start_date": "2020-08-01",  # OG - started Aug 2020
         "holdings": 446_400,  # Dec 2025 - largest corporate BTC holder
         "asset": "BTC",
         "cost_basis_avg": 62_500,  # ~$27.9B total cost
-        "staking_pct": 0,  # BTC has no native staking
+        "is_miner": False,
+        "btc_mined_annual": 0,  # Pure treasury, no mining
+        "staking_pct": 0,
         "staking_apy": 0,
         "quarterly_burn_usd": 15_000_000,  # Software biz + treasury ops
         "burn_source": "Q3 2025 10-Q",
+        # Premium issuance: ~$20B ATM + $3B converts at massive premiums (trades at 2x NAV)
+        "capital_raised_atm": 20_000_000_000,
+        "capital_raised_converts": 3_000_000_000,
+        "avg_issuance_premium": 0.50,  # Trades at 2x NAV, issues at ~1.5x avg
+        "btc_from_premium": 76_700,  # $20B × (0.50/1.50) / $87K = 76.7K BTC
         "leader": "Michael Saylor (Executive Chairman)",
         "strategy": "OG Bitcoin treasury. 21/21 Plan: $21B equity + $21B debt for BTC.",
         "notes": "Started Aug 2020. $46B market cap. Trades at ~2x NAV. S&P 500 pending.",
@@ -411,13 +477,21 @@ BTC_DAT_COMPANIES = {
         "name": "Marathon Digital",
         "ticker": "MARA",
         "tier": 1,
+        "dat_start_date": "2021-01-01",  # HODL strategy formalized 2021
         "holdings": 44_394,  # Dec 2025
         "asset": "BTC",
         "cost_basis_avg": 43_000,
+        "is_miner": True,
+        "btc_mined_annual": 15_000,  # ~50 EH/s, ~1,250 BTC/month
         "staking_pct": 0,
         "staking_apy": 0,
         "quarterly_burn_usd": 85_000_000,  # Mining ops (power, hosting, depreciation)
         "burn_source": "Q3 2025 10-Q",
+        # Premium issuance: ~$2B zero-coupon converts + ATM
+        "capital_raised_atm": 1_500_000_000,
+        "capital_raised_converts": 1_000_000_000,
+        "avg_issuance_premium": 0.15,
+        "btc_from_premium": 3_200,  # $2.5B × (0.15/1.15) / $100K
         "leader": "Fred Thiel (CEO)",
         "strategy": "HODL miner - keeps all mined BTC. 50 EH/s hashrate.",
         "notes": "Largest US public miner. 'HODL' strategy since 2024. Zero-coupon converts.",
@@ -426,13 +500,20 @@ BTC_DAT_COMPANIES = {
         "name": "Riot Platforms",
         "ticker": "RIOT",
         "tier": 1,
+        "dat_start_date": "2021-01-01",
         "holdings": 17_722,  # Dec 2025
         "asset": "BTC",
         "cost_basis_avg": 39_000,
+        "is_miner": True,
+        "btc_mined_annual": 8_500,  # ~30 EH/s operational
         "staking_pct": 0,
         "staking_apy": 0,
         "quarterly_burn_usd": 120_000_000,  # Mining + Corsicana facility ramp
         "burn_source": "Q3 2025 10-Q",
+        "capital_raised_atm": 800_000_000,
+        "capital_raised_converts": 500_000_000,
+        "avg_issuance_premium": 0.10,
+        "btc_from_premium": 1_200,
         "leader": "Jason Les (CEO)",
         "strategy": "1 GW Corsicana facility. Mining + data center pivot.",
         "notes": "Sold some BTC in 2025. Activist pressure from Starboard Value.",
@@ -441,13 +522,20 @@ BTC_DAT_COMPANIES = {
         "name": "CleanSpark",
         "ticker": "CLSK",
         "tier": 1,
+        "dat_start_date": "2021-06-01",
         "holdings": 10_097,  # Dec 2025
         "asset": "BTC",
         "cost_basis_avg": 45_000,
+        "is_miner": True,
+        "btc_mined_annual": 10_000,  # ~37 EH/s target
         "staking_pct": 0,
         "staking_apy": 0,
         "quarterly_burn_usd": 65_000_000,  # Mining ops
         "burn_source": "Q4 2025 10-Q",
+        "capital_raised_atm": 600_000_000,
+        "capital_raised_converts": 0,
+        "avg_issuance_premium": 0.10,
+        "btc_from_premium": 550,
         "leader": "Zach Bradford (CEO)",
         "strategy": "Efficient US miner. 37 EH/s target.",
         "notes": "Acquired GRIID. Aggressive expansion in Georgia/Mississippi.",
@@ -456,13 +544,20 @@ BTC_DAT_COMPANIES = {
         "name": "Hut 8",
         "ticker": "HUT",
         "tier": 1,
+        "dat_start_date": "2021-01-01",
         "holdings": 10_096,  # Dec 2025
         "asset": "BTC",
         "cost_basis_avg": 24_000,  # Lowest cost basis among majors
+        "is_miner": True,
+        "btc_mined_annual": 2_500,  # 7.5 EH/s
         "staking_pct": 0,
         "staking_apy": 0,
         "quarterly_burn_usd": 45_000_000,  # Mining + HPC/AI pivot
         "burn_source": "Q3 2025 10-Q",
+        "capital_raised_atm": 400_000_000,
+        "capital_raised_converts": 0,
+        "avg_issuance_premium": 0.08,
+        "btc_from_premium": 300,
         "leader": "Asher Genoot (CEO)",
         "strategy": "HODL + AI/HPC diversification. 7.5 EH/s.",
         "notes": "Merged with USBTC. Canadian origin. Expanding to AI data centers.",
@@ -471,28 +566,43 @@ BTC_DAT_COMPANIES = {
         "name": "Strive Asset Management",
         "ticker": "ASST",
         "tier": 1,
-        "holdings": 10_900,  # Post-merger with Semler (5,816 + ~3,200 SMLR + additional)
+        "dat_start_date": "2024-05-01",  # Semler started May 2024, Strive merger Sep 2025
+        "holdings": 10_900,  # Post-merger with Semler
         "asset": "BTC",
-        "cost_basis_avg": 100_000,  # Blended - Strive bought at $116K, Semler at $87K
+        "cost_basis_avg": 100_000,
+        "is_miner": False,
+        "btc_mined_annual": 0,  # Pure treasury
         "staking_pct": 0,
         "staking_apy": 0,
         "quarterly_burn_usd": 12_000_000,  # Asset mgmt + medical device ops
         "burn_source": "Q3 2025 10-Q estimate",
+        # Strive: $675M PIPE at $116K, Semler: ~$280M ATM
+        "capital_raised_atm": 280_000_000,
+        "capital_raised_pipe": 675_000_000,
+        "avg_issuance_premium": 0.15,  # Conservative - new to market
+        "btc_from_premium": 1_200,
         "leader": "Vivek Ramaswamy (Co-Founder)",
         "strategy": "First publicly traded asset mgmt BTC treasury. 'Preferred equity only' model.",
-        "notes": "Acquired Semler Scientific Sep 2025 ($1.4B). Bought 5,816 BTC at $116K. $2B AUM. Eric Semler joining board.",
+        "notes": "Acquired Semler Scientific Sep 2025 ($1.4B). Bought 5,816 BTC at $116K. $2B AUM.",
     },
     "BITF": {
         "name": "Bitfarms",
         "ticker": "BITF",
         "tier": 2,
+        "dat_start_date": "2021-01-01",
         "holdings": 1_188,  # Dec 2025 (reduced - sells monthly)
         "asset": "BTC",
         "cost_basis_avg": 55_000,
+        "is_miner": True,
+        "btc_mined_annual": 3_500,  # 12 EH/s, but sells most
         "staking_pct": 0,
         "staking_apy": 0,
         "quarterly_burn_usd": 50_000_000,  # Mining ops
         "burn_source": "Q3 2025 10-Q",
+        "capital_raised_atm": 200_000_000,
+        "capital_raised_converts": 0,
+        "avg_issuance_premium": 0.05,
+        "btc_from_premium": 100,
         "leader": "Ben Gagnon (CEO)",
         "strategy": "Monthly BTC sales for operations. 12 EH/s.",
         "notes": "Sells BTC monthly (not HODL). Argentina/Paraguay operations.",
@@ -501,13 +611,20 @@ BTC_DAT_COMPANIES = {
         "name": "TeraWulf",
         "ticker": "WULF",
         "tier": 2,
+        "dat_start_date": "2022-01-01",
         "holdings": 699,  # Dec 2025 (sells most production)
         "asset": "BTC",
         "cost_basis_avg": 60_000,
+        "is_miner": True,
+        "btc_mined_annual": 3_000,  # ~10 EH/s, sells most
         "staking_pct": 0,
         "staking_apy": 0,
         "quarterly_burn_usd": 35_000_000,  # Mining ops
         "burn_source": "Q3 2025 10-Q",
+        "capital_raised_atm": 150_000_000,
+        "capital_raised_converts": 0,
+        "avg_issuance_premium": 0.05,
+        "btc_from_premium": 75,
         "leader": "Paul Prager (CEO)",
         "strategy": "Zero-carbon miner. Lake Mariner facility (NY).",
         "notes": "Nuclear-powered mining. Pivoting to AI/HPC. Sells most BTC mined.",
@@ -516,13 +633,20 @@ BTC_DAT_COMPANIES = {
         "name": "KULR Technology",
         "ticker": "KULR",
         "tier": 2,
+        "dat_start_date": "2024-12-01",  # Very recent
         "holdings": 510,  # Jan 2026
         "asset": "BTC",
         "cost_basis_avg": 97_000,
+        "is_miner": False,
+        "btc_mined_annual": 0,  # Pure treasury
         "staking_pct": 0,
         "staking_apy": 0,
         "quarterly_burn_usd": 4_000_000,  # Battery tech + treasury ops
         "burn_source": "Q3 2025 10-Q",
+        "capital_raised_atm": 50_000_000,
+        "capital_raised_converts": 0,
+        "avg_issuance_premium": 0.05,
+        "btc_from_premium": 25,
         "leader": "Michael Mo (CEO)",
         "strategy": "Battery/thermal tech company with BTC treasury.",
         "notes": "Started Dec 2024. NASA supplier. Small cap, high volatility.",
@@ -531,13 +655,20 @@ BTC_DAT_COMPANIES = {
         "name": "Cipher Mining",
         "ticker": "CIFR",
         "tier": 2,
+        "dat_start_date": "2021-08-01",
         "holdings": 1_034,  # Dec 2025
         "asset": "BTC",
         "cost_basis_avg": 50_000,
+        "is_miner": True,
+        "btc_mined_annual": 2_500,  # 8.7 EH/s
         "staking_pct": 0,
         "staking_apy": 0,
         "quarterly_burn_usd": 40_000_000,  # Mining ops
         "burn_source": "Q3 2025 10-Q",
+        "capital_raised_atm": 200_000_000,
+        "capital_raised_converts": 0,
+        "avg_issuance_premium": 0.05,
+        "btc_from_premium": 100,
         "leader": "Tyler Page (CEO)",
         "strategy": "Texas-based miner. HPC pivot.",
         "notes": "8.7 EH/s. Sells some BTC for ops. Data center JV with partners.",
