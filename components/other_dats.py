@@ -260,6 +260,7 @@ def render_productivity_section(asset: str, companies: Dict[str, Any], asset_pri
                 "Holdings": holdings,
                 "Is Miner": is_miner,
                 "Mining (BTC/yr)": annual_yield_tokens,
+                "Burn (USD/yr)": annual_burn_usd,
                 "Net Acquired 2025": annual_acquired,
                 "Net Rate": net_rate,
                 "Accretive": is_accretive,
@@ -293,6 +294,7 @@ def render_productivity_section(asset: str, companies: Dict[str, Any], asset_pri
     if is_btc:
         display_prod["Type"] = display_prod["Is Miner"].apply(lambda x: "Miner" if x else "Treasury")
         display_prod["Mining (BTC/yr)"] = display_prod["Mining (BTC/yr)"].apply(lambda x: f"{x:,.0f}" if x > 0 else "-")
+        display_prod["Burn (USD/yr)"] = display_prod["Burn (USD/yr)"].apply(lambda x: f"${x/1_000_000:.0f}M")
         display_prod["Net Acquired 2025"] = display_prod["Net Acquired 2025"].apply(
             lambda x: f"+{x:,.0f}" if x >= 0 else f"{x:,.0f}"
         )
@@ -303,7 +305,7 @@ def render_productivity_section(asset: str, companies: Dict[str, Any], asset_pri
             lambda x: "Accretive" if x else "Dilutive"
         )
         columns_to_show = [
-            "Ticker", "Type", "Holdings", "Mining (BTC/yr)", "Net Acquired 2025", "Net Rate", "Status"
+            "Ticker", "Type", "Holdings", "Mining (BTC/yr)", "Burn (USD/yr)", "Net Acquired 2025", "Net Rate", "Status"
         ]
     else:
         display_prod[f"Yield ({asset}/yr)"] = display_prod[f"Yield ({asset}/yr)"].apply(lambda x: f"{x:,.0f}")
