@@ -142,9 +142,10 @@ def render_asset_section(asset: str, companies: Dict[str, Any], asset_price: flo
         display_df["Staked %"] = display_df["Staked %"].apply(lambda x: f"{x*100:.0f}%")
         display_df["Staking APY"] = display_df["Staking APY"].apply(lambda x: f"{x*100:.1f}%")
         display_df["Annual Yield"] = display_df["Annual Yield"].apply(lambda x: f"{x:,.0f}")
+        display_df["mNAV"] = display_df["mNAV"].apply(lambda x: f"{x:.2f}x" if x else "N/A")
         columns_to_show = [
             "Ticker", "Company", "Holdings", "Treasury Value",
-            "Unrealized P&L", "Staked %", "Staking APY", "Stock Price"
+            "Market Cap", "mNAV", "Staked %", "Staking APY"
         ]
 
     st.dataframe(
@@ -173,18 +174,19 @@ def render_asset_section(asset: str, companies: Dict[str, Any], asset_price: flo
         with col4:
             st.metric("Aggregate mNAV", f"{agg_mnav:.2f}x")
     else:
-        # PoS chains: Show staking yield
+        # PoS chains: Show staking yield + mNAV
+        total_market_cap = df["Market Cap"].sum()
+        agg_mnav = total_market_cap / total_value if total_value > 0 else 0
         total_yield = df["Annual Yield"].sum()
-        total_yield_usd = df["Annual Yield USD"].sum()
         col1, col2, col3, col4 = st.columns(4)
         with col1:
             st.metric(f"Total {asset}", f"{total_holdings:,.0f}")
         with col2:
             st.metric("Treasury Value", format_large_number(total_value))
         with col3:
-            st.metric(f"Annual Yield", f"{total_yield:,.0f} {asset}")
+            st.metric("Aggregate mNAV", f"{agg_mnav:.2f}x")
         with col4:
-            st.metric("Yield (USD)", format_large_number(total_yield_usd))
+            st.metric(f"Annual Yield", f"{total_yield:,.0f} {asset}")
 
     # Expandable details for each company
     with st.expander("Company Details"):
