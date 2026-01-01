@@ -263,32 +263,135 @@ def render_news_page() -> None:
     with tab4:
         st.subheader("Key Sources to Monitor")
 
+        # Real-time Whale Alerts
+        st.markdown("#### Real-Time Whale Alerts")
+        col1, col2 = st.columns(2)
+        with col1:
+            st.markdown("""
+            - [Arkham Intelligence](https://intel.arkm.com/) - Wallet attribution & forensics
+            - [Lookonchain](https://twitter.com/lookonchain) - Twitter whale alerts
+            - [Whale Alert](https://whale-alert.io/) - Large transaction notifications
+            """)
+        with col2:
+            st.markdown("""
+            - [@ArkhamIntel](https://twitter.com/ArkhamIntel) - On-chain intelligence
+            - [@whale_alert](https://twitter.com/whale_alert) - Real-time alerts
+            - [Whalemap](https://whalemap.io/) - Bitcoin & ETH whale tracking
+            """)
+
+        st.markdown("---")
+
+        # Deep Analytics
+        st.markdown("#### Deep Analytics Platforms")
+        col1, col2 = st.columns(2)
+        with col1:
+            st.markdown("""
+            - [Nansen](https://www.nansen.ai/) - Smart money tracking, 500M+ labeled wallets
+            - [Glassnode](https://glassnode.com/) - ETH fundamentals, exchange flows
+            - [Dune Analytics](https://dune.com/) - Custom SQL queries, community dashboards
+            """)
+        with col2:
+            st.markdown("""
+            - [Messari](https://messari.io/) - Research & institutional data
+            - [CryptoQuant](https://cryptoquant.com/) - Exchange & miner flows
+            - [IntoTheBlock](https://app.intotheblock.com/) - AI-driven analytics
+            """)
+
+        st.markdown("---")
+
+        # DeFi & Portfolio Tracking
+        st.markdown("#### DeFi & Portfolio Tracking")
+        col1, col2 = st.columns(2)
+        with col1:
+            st.markdown("""
+            - [DeBank](https://debank.com/) - DeFi positions, whale portfolios
+            - [Zapper](https://zapper.xyz/) - Portfolio tracking & DeFi
+            - [Zerion](https://zerion.io/) - Multi-chain portfolio
+            """)
+        with col2:
+            st.markdown("""
+            - [Etherscan](https://etherscan.io/) - Transaction-level detail
+            - [DefiLlama](https://defillama.com/) - TVL tracking across protocols
+            - [Token Terminal](https://tokenterminal.com/) - Protocol financials
+            """)
+
+        st.markdown("---")
+
+        # ETH Treasury Tracking
+        st.markdown("#### ETH Treasury Specific")
+        col1, col2 = st.columns(2)
+        with col1:
+            st.markdown("""
+            - [The Block Treasuries](https://www.theblock.co/data/crypto-markets/public-companies-702702417) - Corporate holdings
+            - [ethereumtreasuries.net](https://ethereumtreasuries.net) - ETH treasury tracker
+            - [strategicethreserve.xyz](https://strategicethreserve.xyz) - DAT universe
+            """)
+        with col2:
+            st.markdown("""
+            - [Bitcoin Treasuries](https://bitcointreasuries.net/) - Corporate BTC (for comparison)
+            - [CoinGecko Companies](https://www.coingecko.com/en/public-companies-ethereum) - Public co holdings
+            """)
+
+        st.markdown("---")
+
+        # Company IR & Social
+        st.markdown("#### Company IR & Social")
+        col1, col2 = st.columns(2)
+        with col1:
+            st.markdown("""
+            **BMNR - Bitmine Immersion**
+            - [@Bitmine_BMNR](https://twitter.com/Bitmine_BMNR)
+            - [Investor Relations](https://www.bitminetech.io/investor-relations)
+
+            **SBET - SharpLink Gaming**
+            - [@SharpLinkGaming](https://twitter.com/SharpLinkGaming)
+
+            **ETHM - The Ether Machine**
+            - [@TheEtherMachine](https://twitter.com/TheEtherMachine)
+            - [ethermachine.com](https://ethermachine.com/)
+
+            **BTBT - Bit Digital**
+            - [@BitDigitalInc](https://twitter.com/BitDigitalInc)
+            """)
+        with col2:
+            st.markdown("""
+            **BTCS Inc.**
+            - [@BTCSInc](https://twitter.com/BTCSInc)
+
+            **ETHZ - ETHZilla**
+            - [@ETHZillaCorp](https://twitter.com/ETHZillaCorp)
+
+            **GAME - GameSquare**
+            - [@GameaboreSQ](https://twitter.com/GameSquareHQ)
+
+            **FGNX - Fundamental Global**
+            - [@FundamentalGlbl](https://twitter.com/FundamentalGlbl)
+            """)
+
+        st.markdown("---")
+
+        # SEC EDGAR
+        st.markdown("#### SEC EDGAR Filings")
         st.markdown("""
-        **Real-time (minutes)**
-        - [@lookonchain](https://twitter.com/lookonchain) - Whale wallet tracking
-        - [@ArkhamIntel](https://twitter.com/ArkhamIntel) - On-chain intelligence
-
-        **Same-day**
-        - [The Block Treasuries](https://theblock.co/treasuries/ethereum-treasuries)
-        - [ethereumtreasuries.net](https://ethereumtreasuries.net)
-        - [strategicethreserve.xyz](https://strategicethreserve.xyz)
-
-        **Company IR / Twitter**
-        - [@Bitmine_BMNR](https://twitter.com/Bitmine_BMNR) - Weekly updates
-        - [@SharpLinkGaming](https://twitter.com/SharpLinkGaming)
-
-        **SEC EDGAR (Quarterly)**
-        - [SEC EDGAR Search](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany)
-        - [SBET Filings](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001784851)
-        - [BTBT Filings](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001799290)
-        - [BTCS Filings](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001436229)
+        - [SEC EDGAR Search](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany) - All company filings
+        - [BMNR](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001829311) |
+          [SBET](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001784851) |
+          [ETHM](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002080334) |
+          [BTBT](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001799290)
+        - [BTCS](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001436229) |
+          [ETHZ](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001690080) |
+          [GAME](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001845419) |
+          [FGNX](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001527352)
         """)
 
         st.markdown("---")
-        st.subheader("RSS Feeds")
+
+        # RSS Feeds
+        st.markdown("#### RSS Feeds")
         st.code("""
 # Add to your RSS reader:
 https://www.coindesk.com/arc/outboundfeeds/rss/
 https://cointelegraph.com/rss
 https://news.google.com/rss/search?q=Ethereum+treasury+company
+https://whale-alert.io/feed
         """)
