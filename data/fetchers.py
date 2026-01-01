@@ -8,9 +8,15 @@ import pandas as pd
 from datetime import datetime, timedelta
 from typing import Optional, Dict, Any, List
 import streamlit as st
+import time
 
 # Cache timeout in seconds
 CACHE_TTL = 300  # 5 minutes
+STOCK_CACHE_TTL = 900  # 15 minutes for stock data (reduce Yahoo API calls)
+
+# Retry settings
+MAX_RETRIES = 3
+RETRY_DELAY = 2  # seconds
 
 
 @st.cache_data(ttl=CACHE_TTL)
@@ -50,41 +56,60 @@ def fetch_eth_treasury_companies() -> List[Dict[str, Any]]:
         return []
 
 
-@st.cache_data(ttl=CACHE_TTL)
+@st.cache_data(ttl=STOCK_CACHE_TTL)
 def fetch_stock_data(ticker: str) -> Dict[str, Any]:
-    """Fetch stock data from Yahoo Finance"""
-    try:
-        stock = yf.Ticker(ticker)
-        info = stock.info
+    """Fetch stock data from Yahoo Finance with retry logic"""
+    last_error = None
 
-        # Get current price and basic info
-        current_price = info.get("currentPrice") or info.get("regularMarketPrice")
+    for attempt in range(MAX_RETRIES):
+        try:
+            stock = yf.Ticker(ticker)
+            info = stock.info
 
-        # Get historical data for drawdown calculation
-        hist = stock.history(period="1y")
+            # Check if we got valid data (Yahoo returns empty dict on rate limit)
+            if not info or len(info) < 5:
+                raise Exception("Empty response - possible rate limit")
 
-        ath_1y = hist["High"].max() if not hist.empty else None
-        drawdown = None
-        if ath_1y and current_price:
-            drawdown = (current_price - ath_1y) / ath_1y
+            # Get current price and basic info
+            current_price = info.get("currentPrice") or info.get("regularMarketPrice")
 
-        return {
-            "ticker": ticker,
-            "price": current_price,
-            "market_cap": info.get("marketCap"),
-            "shares_outstanding": info.get("sharesOutstanding"),
-            "pe_ratio": info.get("trailingPE"),
-            "52w_high": info.get("fiftyTwoWeekHigh"),
-            "52w_low": info.get("fiftyTwoWeekLow"),
-            "ath_1y": ath_1y,
-            "drawdown_from_ath": drawdown,
-            "volume": info.get("volume"),
-            "avg_volume": info.get("averageVolume"),
-            "name": info.get("shortName", ticker),
-            "timestamp": datetime.now().isoformat(),
-        }
-    except Exception as e:
-        return {"ticker": ticker, "error": str(e), "price": None}
+            # Get historical data for drawdown calculation
+            hist = stock.history(period="1y")
+
+            ath_1y = hist["High"].max() if not hist.empty else None
+            drawdown = None
+            if ath_1y and current_price:
+                drawdown = (current_price - ath_1y) / ath_1y
+
+            return {
+                "ticker": ticker,
+                "price": current_price,
+                "market_cap": info.get("marketCap"),
+                "shares_outstanding": info.get("sharesOutstanding"),
+                "pe_ratio": info.get("trailingPE"),
+                "52w_high": info.get("fiftyTwoWeekHigh"),
+                "52w_low": info.get("fiftyTwoWeekLow"),
+                "ath_1y": ath_1y,
+                "drawdown_from_ath": drawdown,
+                "volume": info.get("volume"),
+                "avg_volume": info.get("averageVolume"),
+                "name": info.get("shortName", ticker),
+                "timestamp": datetime.now().isoformat(),
+                "source": "yahoo",
+            }
+        except Exception as e:
+            last_error = str(e)
+            if attempt < MAX_RETRIES - 1:
+                time.sleep(RETRY_DELAY * (attempt + 1))  # Exponential backoff
+            continue
+
+    # All retries failed - return error with cached hint
+    return {
+        "ticker": ticker,
+        "error": f"Rate limited after {MAX_RETRIES} attempts: {last_error}",
+        "price": None,
+        "rate_limited": True,
+    }
 
 
 @st.cache_data(ttl=CACHE_TTL)
