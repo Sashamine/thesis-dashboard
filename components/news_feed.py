@@ -151,8 +151,8 @@ def render_sec_filing(filing: Dict[str, Any]) -> None:
         st.caption(date_str)
 
 
-def render_sec_filings_feed(max_items: int = 20) -> None:
-    """Render SEC filings feed for all DAT companies"""
+def render_sec_filings_feed(max_items_per_company: int = 5) -> None:
+    """Render SEC filings feed organized by company"""
     st.subheader("SEC EDGAR Filings")
 
     col1, col2 = st.columns([4, 1])
@@ -161,18 +161,57 @@ def render_sec_filings_feed(max_items: int = 20) -> None:
             st.cache_data.clear()
             st.rerun()
 
+    # Company order and names
+    companies = [
+        ("BMNR", "Bitmine Immersion Technologies"),
+        ("SBET", "SharpLink Gaming"),
+        ("ETHM", "The Ether Machine"),
+        ("BTBT", "Bit Digital"),
+        ("BTCS", "BTCS Inc."),
+        ("ETHZ", "ETHZilla Corporation"),
+        ("GAME", "GameSquare Holdings"),
+        ("FGNX", "Fundamental Global"),
+    ]
+
     with st.spinner("Loading SEC filings..."):
-        filings = fetch_all_dat_filings(count_per_company=5)
+        filings = fetch_all_dat_filings(count_per_company=max_items_per_company)
 
     if not filings:
-        st.info("No SEC filings found. Some companies may not have CIK numbers configured.")
-        st.caption("Companies with SEC data: SBET, BTBT, BTCS, GAME, FGNX")
+        st.info("No SEC filings found.")
         return
 
-    for i, filing in enumerate(filings[:max_items]):
-        render_sec_filing(filing)
-        if i < len(filings[:max_items]) - 1:
-            st.markdown("---")
+    # Group filings by ticker
+    filings_by_company = {}
+    for filing in filings:
+        ticker = filing.get("ticker", "")
+        if ticker not in filings_by_company:
+            filings_by_company[ticker] = []
+        filings_by_company[ticker].append(filing)
+
+    # Display by company
+    for ticker, company_name in companies:
+        company_filings = filings_by_company.get(ticker, [])
+        filing_count = len(company_filings)
+
+        with st.expander(f"**{ticker}** - {company_name} ({filing_count} filings)", expanded=False):
+            if not company_filings:
+                st.caption("No recent filings found")
+            else:
+                for i, filing in enumerate(company_filings):
+                    emoji = get_filing_type_emoji(filing.get("form_type", ""))
+                    form_type = filing.get("form_type", "")
+                    url = filing.get("url", "")
+                    date_str = filing.get("date_str", "")
+                    description = get_filing_type_description(form_type)
+
+                    col1, col2 = st.columns([4, 1])
+                    with col1:
+                        st.markdown(f"{emoji} **[{form_type}]({url})** - {description}")
+                    with col2:
+                        st.caption(date_str)
+
+                    if i < len(company_filings) - 1:
+                        st.markdown("---")
 
 
 def render_company_sec_filings(ticker: str, max_items: int = 10) -> None:
@@ -204,7 +243,7 @@ def render_news_page() -> None:
         render_news_feed(max_items=20)
 
     with tab2:
-        render_sec_filings_feed(max_items=25)
+        render_sec_filings_feed(max_items_per_company=5)
 
     with tab3:
         col1, col2 = st.columns(2)
