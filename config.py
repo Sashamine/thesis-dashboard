@@ -50,7 +50,10 @@ ETF_STAKING_YIELD = 0.032  # 3.2% - Grayscale ETH Mini Trust net yield after 0.1
 
 # DAT Company Definitions
 # Burn rates from latest 10-Q/10-K filings (quarterly opex in USD)
-# Premium issuance: ETH acquired by issuing shares above NAV
+# Premium issuance methodology:
+#   ETH from Premium = Capital Raised × (Avg Premium / (1 + Avg Premium)) / ETH Price
+#   Assumes: ATM 20%, PIPE 25%, Converts 10%, small caps 5-10%
+#   Testable: If ETH/share grows faster than staking yield, premium capture is working
 DAT_COMPANIES = {
     # Tier 1: Major Players (>100k ETH)
     "BMNR": {
@@ -62,16 +65,17 @@ DAT_COMPANIES = {
         "staking_method": "MAVAN validators",
         "quarterly_burn_usd": 2_500_000,  # ~$2.5M/quarter opex from 10-Q
         "burn_source": "Q3 2025 10-Q",
-        # Premium issuance tracking (from S-3/424B filings)
-        # Raised ~$4.5B ATM, currently trades at 20% DISCOUNT to NAV
-        # Estimated avg premium ~5% historically = $225M / $3,500 = ~64K ETH
-        "shares_issued_ytd": 314_000_000,  # 112M→426M shares (Jul-Dec 2025)
-        "avg_issuance_premium": 0.05,  # Modest - now trades at discount
-        "eth_from_premium": 64_000,  # $225M premium / $3,500 ETH
+        # Premium issuance: $10B ATM + $615M PIPE per Kerrisdale analysis
+        # ATM: $10B × (0.20/1.20) / $3,500 = 476K ETH
+        # PIPE: $615M × (0.25/1.25) / $3,500 = 35K ETH
+        "capital_raised_atm": 10_000_000_000,
+        "capital_raised_pipe": 615_000_000,
+        "avg_issuance_premium": 0.20,  # Normalized: high early, discount now
+        "eth_from_premium": 510_000,  # 476K + 35K from premium capture
         "leader": "Tom Lee (Fundstrat)",
         "strategy": "5% of ETH supply goal, staking, MAVAN validators Q1 2026",
-        "shares_outstanding": None,  # Will be fetched
-        "notes": "Core DAT position, largest ETH treasury. NAV ~$30/share. Seeking 50B share authorization.",
+        "shares_outstanding": None,
+        "notes": "Largest ETH treasury. NAV ~$30/share. Trades at 0.8x book. $24.5B ATM capacity.",
     },
     "SBET": {
         "name": "SharpLink Gaming",
@@ -82,15 +86,17 @@ DAT_COMPANIES = {
         "staking_method": "Linea/Lido",
         "quarterly_burn_usd": 2_850_000,  # ~$2.85M/quarter (TTM opex ~$11.4M)
         "burn_source": "Q3 2025 10-Q - verify, user reports may be higher",
-        # Premium issuance: $76.5M at 12% premium documented + others
-        # Also running $1.5B buyback below NAV (accretive)
-        "shares_issued_ytd": 4_500_000,  # 4.5M shares at $17 (12% premium)
-        "avg_issuance_premium": 0.12,  # 12% per Oct 2025 filing
-        "eth_from_premium": 8_500,  # ~$30M total premium / $3,500 ETH
+        # Premium issuance: ~$2.6B total (ATM/RD + PIPE) per Q2 2025 report
+        # ATM/RD: $2B × (0.15/1.15) / $3,500 = 74K ETH
+        # PIPE: $600M × (0.20/1.20) / $3,500 = 29K ETH
+        "capital_raised_atm": 2_000_000_000,
+        "capital_raised_pipe": 600_000_000,
+        "avg_issuance_premium": 0.15,  # More disciplined issuance
+        "eth_from_premium": 103_000,  # 74K + 29K from premium capture
         "leader": "Joe Lubin (Ethereum co-founder)",
         "strategy": "Staking, Linea partnership, tokenized equity via Superstate",
         "shares_outstanding": None,
-        "notes": "Core DAT position, #2 ETH treasury. $1.5B buyback program. Trades at ~0.83x mNAV.",
+        "notes": "#2 ETH treasury. $1.5B buyback program. Trades at ~0.83x mNAV.",
     },
     "ETHM": {
         "name": "The Ether Machine",
@@ -102,9 +108,10 @@ DAT_COMPANIES = {
         "quarterly_burn_usd": 800_000,  # ~$800K/quarter (lean ops)
         "burn_source": "S-4 Filing 2025",
         # SPAC merger with Dynamix - no ATM premium issuance
-        "shares_issued_ytd": 0,  # SPAC structure, not ATM
+        "capital_raised_atm": 0,
+        "capital_raised_pipe": 0,
         "avg_issuance_premium": 0,
-        "eth_from_premium": 0,  # N/A - merger structure
+        "eth_from_premium": 0,  # N/A - SPAC merger structure
         "leader": "Andrew Keys",
         "strategy": "DeFi/staking 'machine' to grow ETH",
         "shares_outstanding": None,
@@ -119,10 +126,13 @@ DAT_COMPANIES = {
         "staking_method": "Native staking",
         "quarterly_burn_usd": 8_500_000,  # ~$8.5M/quarter (mining + staking ops)
         "burn_source": "Q3 2025 10-Q",
-        # $150M converts at 8.2% premium + $172M offering
-        "shares_issued_ytd": 40_000_000,  # Estimate from offerings
-        "avg_issuance_premium": 0.082,  # 8.2% per Oct 2025 convert filing
-        "eth_from_premium": 5_500,  # ~$21M premium / $3,800 ETH
+        # $150M converts at 8.2% + $172M public offering
+        # Converts: $150M × (0.08/1.08) / $3,500 = 3.2K ETH
+        # Offering: $172M × (0.15/1.15) / $3,500 = 6.4K ETH
+        "capital_raised_atm": 172_000_000,
+        "capital_raised_converts": 150_000_000,
+        "avg_issuance_premium": 0.10,  # Blended converts + offering
+        "eth_from_premium": 9_500,  # 3.2K + 6.4K from premium capture
         "leader": "Sam Tabar",
         "strategy": "86% staked, fully exited BTC. Avg cost $3,045/ETH.",
         "shares_outstanding": None,
@@ -139,7 +149,8 @@ DAT_COMPANIES = {
         "quarterly_burn_usd": 1_200_000,  # ~$1.2M/quarter
         "burn_source": "Q3 2025 10-Q",
         # SELLING ETH, not issuing at premium - pivoting away from DAT
-        "shares_issued_ytd": 0,  # Not issuing, doing buybacks
+        "capital_raised_atm": 0,
+        "capital_raised_pipe": 0,
         "avg_issuance_premium": 0,
         "eth_from_premium": 0,  # Actually sold $114.5M ETH (Oct+Dec)
         "leader": "Peter Thiel backed",
@@ -156,9 +167,11 @@ DAT_COMPANIES = {
         "staking_method": "Builder+ validators",
         "quarterly_burn_usd": 1_800_000,  # ~$1.8M/quarter
         "burn_source": "Q3 2025 10-Q",
-        "shares_issued_ytd": 8_000_000,
-        "avg_issuance_premium": 0.05,  # Conservative estimate
-        "eth_from_premium": 1_000,  # Smaller company, modest premium
+        # Smaller company, estimate ~$60M raised at 10% avg premium
+        "capital_raised_atm": 60_000_000,
+        "capital_raised_pipe": 0,
+        "avg_issuance_premium": 0.10,
+        "eth_from_premium": 1_600,  # $60M × (0.10/1.10) / $3,500
         "leader": "",
         "strategy": "ETH 'Bividend,' DeFi/TradFi flywheel, Builder+",
         "shares_outstanding": None,
@@ -173,9 +186,11 @@ DAT_COMPANIES = {
         "staking_method": "Lido/stETH",
         "quarterly_burn_usd": 12_000_000,  # ~$12M/quarter (esports/gaming ops)
         "burn_source": "Q3 2025 10-Q",
-        "shares_issued_ytd": 20_000_000,
-        "avg_issuance_premium": 0.03,  # Small premium, if any
-        "eth_from_premium": 300,  # Minimal - small ETH position
+        # Small ETH position, estimate ~$30M raised at 5% avg premium
+        "capital_raised_atm": 30_000_000,
+        "capital_raised_pipe": 0,
+        "avg_issuance_premium": 0.05,
+        "eth_from_premium": 400,  # $30M × (0.05/1.05) / $3,500
         "leader": "",
         "strategy": "$250M authorization for more",
         "shares_outstanding": None,
@@ -190,9 +205,11 @@ DAT_COMPANIES = {
         "staking_method": "Lido/stETH",
         "quarterly_burn_usd": 2_000_000,  # ~$2M/quarter (insurance ops)
         "burn_source": "Q3 2025 10-Q",
-        "shares_issued_ytd": 3_000_000,
-        "avg_issuance_premium": 0.04,
-        "eth_from_premium": 200,  # Small company, minimal
+        # Smallest position, estimate ~$20M raised at 5% avg premium
+        "capital_raised_atm": 20_000_000,
+        "capital_raised_pipe": 0,
+        "avg_issuance_premium": 0.05,
+        "eth_from_premium": 270,  # $20M × (0.05/1.05) / $3,500
         "leader": "",
         "strategy": "Insurance/reinsurance pivot",
         "shares_outstanding": None,
