@@ -57,70 +57,76 @@ DAT_COMPANIES = {
         "name": "Bitmine Immersion",
         "ticker": "BMNR",
         "tier": 1,
-        "eth_holdings": 4_110_000,  # Dec 2025 estimate
+        "eth_holdings": 4_066_000,  # Dec 21, 2025 per press release
         "staking_pct": 0.85,  # 85% staked via MAVAN validators
         "staking_method": "MAVAN validators",
         "quarterly_burn_usd": 2_500_000,  # ~$2.5M/quarter opex from 10-Q
         "burn_source": "Q3 2025 10-Q",
         # Premium issuance tracking (from S-3/424B filings)
-        "shares_issued_ytd": 25_000_000,  # Shares issued YTD
-        "avg_issuance_premium": 0.15,  # Avg 15% premium to NAV at issuance
-        "eth_from_premium": 150_000,  # ETH acquired from premium (calculated)
+        # Raised ~$4.5B ATM, currently trades at 20% DISCOUNT to NAV
+        # Estimated avg premium ~5% historically = $225M / $3,500 = ~64K ETH
+        "shares_issued_ytd": 314_000_000,  # 112M→426M shares (Jul-Dec 2025)
+        "avg_issuance_premium": 0.05,  # Modest - now trades at discount
+        "eth_from_premium": 64_000,  # $225M premium / $3,500 ETH
         "leader": "Tom Lee (Fundstrat)",
         "strategy": "5% of ETH supply goal, staking, MAVAN validators Q1 2026",
         "shares_outstanding": None,  # Will be fetched
-        "notes": "Core DAT position, largest ETH treasury company",
+        "notes": "Core DAT position, largest ETH treasury. NAV ~$30/share. Seeking 50B share authorization.",
     },
     "SBET": {
         "name": "SharpLink Gaming",
         "ticker": "SBET",
         "tier": 1,
-        "eth_holdings": 838_000,
+        "eth_holdings": 860_000,  # Oct 2025: 859,853 ETH per press release
         "staking_pct": 0.95,  # 95% staked via Linea/Lido
         "staking_method": "Linea/Lido",
         "quarterly_burn_usd": 2_850_000,  # ~$2.85M/quarter (TTM opex ~$11.4M)
         "burn_source": "Q3 2025 10-Q - verify, user reports may be higher",
-        "shares_issued_ytd": 15_000_000,
-        "avg_issuance_premium": 0.20,  # 20% premium
-        "eth_from_premium": 35_000,
+        # Premium issuance: $76.5M at 12% premium documented + others
+        # Also running $1.5B buyback below NAV (accretive)
+        "shares_issued_ytd": 4_500_000,  # 4.5M shares at $17 (12% premium)
+        "avg_issuance_premium": 0.12,  # 12% per Oct 2025 filing
+        "eth_from_premium": 8_500,  # ~$30M total premium / $3,500 ETH
         "leader": "Joe Lubin (Ethereum co-founder)",
         "strategy": "Staking, Linea partnership, tokenized equity via Superstate",
         "shares_outstanding": None,
-        "notes": "Core DAT position, #2 ETH treasury. Q3 2025: $104M operating income from ETH gains.",
+        "notes": "Core DAT position, #2 ETH treasury. $1.5B buyback program. Trades at ~0.83x mNAV.",
     },
     "ETHM": {
         "name": "The Ether Machine",
         "ticker": "ETHM",
         "tier": 1,
-        "eth_holdings": 496_000,
+        "eth_holdings": 495_362,  # Per CoinGecko/company data
         "staking_pct": 1.0,  # 100% staked - "fully staked treasury"
         "staking_method": "Native staking",
         "quarterly_burn_usd": 800_000,  # ~$800K/quarter (lean ops)
         "burn_source": "S-4 Filing 2025",
-        "shares_issued_ytd": 0,  # New company, SPAC merger
+        # SPAC merger with Dynamix - no ATM premium issuance
+        "shares_issued_ytd": 0,  # SPAC structure, not ATM
         "avg_issuance_premium": 0,
-        "eth_from_premium": 0,
+        "eth_from_premium": 0,  # N/A - merger structure
         "leader": "Andrew Keys",
         "strategy": "DeFi/staking 'machine' to grow ETH",
         "shares_outstanding": None,
-        "notes": "First 1,000+ ETH yield from fully staked treasury",
+        "notes": "SPAC merger with Dynamix (ETHM). Trades at 24% premium. 3rd largest ETH treasury.",
     },
     "BTBT": {
         "name": "Bit Digital",
         "ticker": "BTBT",
         "tier": 1,
-        "eth_holdings": 154_000,
-        "staking_pct": 0.90,  # 90% staked per company statement
+        "eth_holdings": 154_000,  # Oct 2025: 153,547 ETH per monthly report
+        "staking_pct": 0.86,  # 86.3% staked per Oct report
         "staking_method": "Native staking",
         "quarterly_burn_usd": 8_500_000,  # ~$8.5M/quarter (mining + staking ops)
         "burn_source": "Q3 2025 10-Q",
-        "shares_issued_ytd": 10_000_000,
-        "avg_issuance_premium": 0.10,
-        "eth_from_premium": 5_000,
+        # $150M converts at 8.2% premium + $172M offering
+        "shares_issued_ytd": 40_000_000,  # Estimate from offerings
+        "avg_issuance_premium": 0.082,  # 8.2% per Oct 2025 convert filing
+        "eth_from_premium": 5_500,  # ~$21M premium / $3,800 ETH
         "leader": "Sam Tabar",
-        "strategy": "90% staked, fully exited BTC",
+        "strategy": "86% staked, fully exited BTC. Avg cost $3,045/ETH.",
         "shares_outstanding": None,
-        "notes": "",
+        "notes": "Staking yield ~2.93% annualized. mNAV $3.84/share (Sep 2025).",
     },
     # Tier 2: Mid-Size (10k-100k ETH)
     "ETHZ": {
@@ -132,9 +138,10 @@ DAT_COMPANIES = {
         "staking_method": "Native staking",
         "quarterly_burn_usd": 1_200_000,  # ~$1.2M/quarter
         "burn_source": "Q3 2025 10-Q",
-        "shares_issued_ytd": 5_000_000,
-        "avg_issuance_premium": 0.12,
-        "eth_from_premium": 3_500,
+        # SELLING ETH, not issuing at premium - pivoting away from DAT
+        "shares_issued_ytd": 0,  # Not issuing, doing buybacks
+        "avg_issuance_premium": 0,
+        "eth_from_premium": 0,  # Actually sold $114.5M ETH (Oct+Dec)
         "leader": "Peter Thiel backed",
         "strategy": "Pivoting to RWA tokenization, sold ETH for debt paydown & buybacks",
         "shares_outstanding": None,
@@ -150,8 +157,8 @@ DAT_COMPANIES = {
         "quarterly_burn_usd": 1_800_000,  # ~$1.8M/quarter
         "burn_source": "Q3 2025 10-Q",
         "shares_issued_ytd": 8_000_000,
-        "avg_issuance_premium": 0.08,
-        "eth_from_premium": 2_000,
+        "avg_issuance_premium": 0.05,  # Conservative estimate
+        "eth_from_premium": 1_000,  # Smaller company, modest premium
         "leader": "",
         "strategy": "ETH 'Bividend,' DeFi/TradFi flywheel, Builder+",
         "shares_outstanding": None,
@@ -167,12 +174,12 @@ DAT_COMPANIES = {
         "quarterly_burn_usd": 12_000_000,  # ~$12M/quarter (esports/gaming ops)
         "burn_source": "Q3 2025 10-Q",
         "shares_issued_ytd": 20_000_000,
-        "avg_issuance_premium": 0.05,
-        "eth_from_premium": 500,
+        "avg_issuance_premium": 0.03,  # Small premium, if any
+        "eth_from_premium": 300,  # Minimal - small ETH position
         "leader": "",
         "strategy": "$250M authorization for more",
         "shares_outstanding": None,
-        "notes": "",
+        "notes": "High burn rate relative to ETH holdings.",
     },
     "FGNX": {
         "name": "Fundamental Global",
@@ -184,8 +191,8 @@ DAT_COMPANIES = {
         "quarterly_burn_usd": 2_000_000,  # ~$2M/quarter (insurance ops)
         "burn_source": "Q3 2025 10-Q",
         "shares_issued_ytd": 3_000_000,
-        "avg_issuance_premium": 0.06,
-        "eth_from_premium": 300,
+        "avg_issuance_premium": 0.04,
+        "eth_from_premium": 200,  # Small company, minimal
         "leader": "",
         "strategy": "Insurance/reinsurance pivot",
         "shares_outstanding": None,
