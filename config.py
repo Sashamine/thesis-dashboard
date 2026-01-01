@@ -564,15 +564,19 @@ BTC_DAT_COMPANIES = {
         "cost_basis_avg": 100_000,
         "is_miner": False,
         "btc_mined_annual": 0,  # Pure treasury
-        "btc_acquired_2025": 8_500,  # Semler + Strive buys in 2025
+        # Semler acquisition was DILUTIVE - paid 2x NAV ($600M equity for ~$300M BTC)
+        # Post-merger PIPE: $675M for 5,816 BTC at $116K (~market price, neutral)
+        # Net effect: ~3,000 BTC from Semler at 2x cost = -3,000 BTC equivalent dilution
+        # PIPE ~neutral. Total: roughly 0 net accretion after accounting for dilution
+        "btc_acquired_2025": 0,  # Dilutive acquisition offsets raw BTC added
         "staking_pct": 0,
         "staking_apy": 0,
         "quarterly_burn_usd": 12_000_000,  # Asset mgmt + medical device ops
         "burn_source": "Q3 2025 10-Q estimate",
-        "btc_from_premium": 1_500,  # From premium issuance
+        "btc_from_premium": 0,  # Paid premium, didn't capture it
         "leader": "Vivek Ramaswamy (Co-Founder)",
         "strategy": "First publicly traded asset mgmt BTC treasury. 'Preferred equity only' model.",
-        "notes": "Acquired Semler Scientific Sep 2025 ($1.4B). $2B AUM.",
+        "notes": "Acquired Semler at 2x NAV (dilutive). PIPE at ~market. Net: ~0 accretion.",
     },
     "BITF": {
         "name": "Bitfarms",
