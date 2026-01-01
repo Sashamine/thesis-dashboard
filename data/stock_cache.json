@@ -1,0 +1,74 @@
+{
+  "BMNR": {
+    "ticker": "BMNR",
+    "price": 2.45,
+    "market_cap": 245000000,
+    "shares_outstanding": 100000000,
+    "name": "Bitmine Immersion Technologies",
+    "timestamp": "2025-12-30T12:00:00",
+    "source": "fallback_cache"
+  },
+  "SBET": {
+    "ticker": "SBET",
+    "price": 1.85,
+    "market_cap": 185000000,
+    "shares_outstanding": 100000000,
+    "name": "SharpLink Gaming",
+    "timestamp": "2025-12-30T12:00:00",
+    "source": "fallback_cache"
+  },
+  "ETHM": {
+    "ticker": "ETHM",
+    "price": 12.50,
+    "market_cap": 625000000,
+    "shares_outstanding": 50000000,
+    "name": "The Ether Machine",
+    "timestamp": "2025-12-30T12:00:00",
+    "source": "fallback_cache"
+  },
+  "BTBT": {
+    "ticker": "BTBT",
+    "price": 3.20,
+    "market_cap": 320000000,
+    "shares_outstanding": 100000000,
+    "name": "Bit Digital",
+    "timestamp": "2025-12-30T12:00:00",
+    "source": "fallback_cache"
+  },
+  "ETHZ": {
+    "ticker": "ETHZ",
+    "price": 4.75,
+    "market_cap": 190000000,
+    "shares_outstanding": 40000000,
+    "name": "ETHZilla Corporation",
+    "timestamp": "2025-12-30T12:00:00",
+    "source": "fallback_cache"
+  },
+  "BTCS": {
+    "ticker": "BTCS",
+    "price": 2.10,
+    "market_cap": 84000000,
+    "shares_outstanding": 40000000,
+    "name": "BTCS Inc.",
+    "timestamp": "2025-12-30T12:00:00",
+    "source": "fallback_cache"
+  },
+  "GAME": {
+    "ticker": "GAME",
+    "price": 1.50,
+    "market_cap": 75000000,
+    "shares_outstanding": 50000000,
+    "name": "GameSquare Holdings",
+    "timestamp": "2025-12-30T12:00:00",
+    "source": "fallback_cache"
+  },
+  "FGNX": {
+    "ticker": "FGNX",
+    "price": 3.80,
+    "market_cap": 95000000,
+    "shares_outstanding": 25000000,
+    "name": "Fundamental Global",
+    "timestamp": "2025-12-30T12:00:00",
+    "source": "fallback_cache"
+  }
+}

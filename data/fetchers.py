@@ -5,6 +5,8 @@ CoinGecko, Yahoo Finance, FRED, DefiLlama
 import requests
 import yfinance as yf
 import pandas as pd
+import json
+import os
 from datetime import datetime, timedelta
 from typing import Optional, Dict, Any, List
 import streamlit as st
@@ -17,6 +19,54 @@ STOCK_CACHE_TTL = 900  # 15 minutes for stock data (reduce Yahoo API calls)
 # Retry settings
 MAX_RETRIES = 3
 RETRY_DELAY = 2  # seconds
+
+# Persistent cache file path
+STOCK_CACHE_FILE = os.path.join(os.path.dirname(__file__), "stock_cache.json")
+
+
+def _load_stock_cache() -> Dict[str, Any]:
+    """Load persistent stock cache from file"""
+    try:
+        if os.path.exists(STOCK_CACHE_FILE):
+            with open(STOCK_CACHE_FILE, "r") as f:
+                return json.load(f)
+    except Exception:
+        pass
+    return {}
+
+
+def _save_stock_cache(cache: Dict[str, Any]) -> None:
+    """Save stock cache to file"""
+    try:
+        with open(STOCK_CACHE_FILE, "w") as f:
+            json.dump(cache, f, indent=2)
+    except Exception:
+        pass  # Fail silently on Streamlit Cloud (read-only filesystem)
+
+
+def _update_stock_cache(ticker: str, data: Dict[str, Any]) -> None:
+    """Update a single ticker in the cache"""
+    cache = _load_stock_cache()
+    cache[ticker] = data
+    _save_stock_cache(cache)
+
+
+def _get_cached_stock(ticker: str) -> Optional[Dict[str, Any]]:
+    """Get cached stock data with staleness indicator"""
+    cache = _load_stock_cache()
+    if ticker in cache:
+        data = cache[ticker].copy()
+        # Calculate staleness
+        try:
+            cached_time = datetime.fromisoformat(data.get("timestamp", ""))
+            age_hours = (datetime.now() - cached_time).total_seconds() / 3600
+            data["cache_age_hours"] = round(age_hours, 1)
+            data["is_stale"] = age_hours > 24  # Mark as stale if > 24 hours old
+        except:
+            data["cache_age_hours"] = None
+            data["is_stale"] = True
+        return data
+    return None
 
 
 @st.cache_data(ttl=CACHE_TTL)
@@ -193,7 +243,7 @@ def _fetch_from_fmp(ticker: str, api_key: str) -> Optional[Dict[str, Any]]:
 
 @st.cache_data(ttl=STOCK_CACHE_TTL)
 def fetch_stock_data(ticker: str) -> Dict[str, Any]:
-    """Fetch stock data with automatic fallback between sources"""
+    """Fetch stock data with automatic fallback between sources and persistent cache"""
     from config import ALPHA_VANTAGE_KEY, FMP_API_KEY
 
     # Try sources in order: Yahoo -> FMP -> Alpha Vantage
@@ -208,15 +258,24 @@ def fetch_stock_data(ticker: str) -> Dict[str, Any]:
         try:
             result = fetch_func()
             if result and result.get("price"):
+                # Success! Update persistent cache and return
+                _update_stock_cache(ticker, result)
                 return result
             errors.append(f"{source_name}: no data")
         except Exception as e:
             errors.append(f"{source_name}: {str(e)}")
 
-    # All sources failed
+    # All live sources failed - try persistent cache
+    cached = _get_cached_stock(ticker)
+    if cached and cached.get("price"):
+        cached["source"] = f"cache ({cached.get('source', 'unknown')})"
+        cached["from_cache"] = True
+        return cached
+
+    # Absolutely everything failed
     return {
         "ticker": ticker,
-        "error": f"All sources failed: {'; '.join(errors)}",
+        "error": f"All sources failed and no cache: {'; '.join(errors)}",
         "price": None,
         "rate_limited": True,
     }
