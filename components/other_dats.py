@@ -108,6 +108,7 @@ def render_asset_section(asset: str, companies: Dict[str, Any], asset_price: flo
     st.caption(f"{asset} Price: ${asset_price:,.2f}")
 
     df = build_dat_dataframe(companies, asset_price)
+    is_btc = asset == "BTC"
 
     # Format for display
     display_df = df.copy()
@@ -119,9 +120,6 @@ def render_asset_section(asset: str, companies: Dict[str, Any], asset_price: flo
     display_df["P&L %"] = display_df["P&L %"].apply(
         lambda x: f"+{x:.1f}%" if x >= 0 else f"{x:.1f}%"
     )
-    display_df["Staked %"] = display_df["Staked %"].apply(lambda x: f"{x*100:.0f}%")
-    display_df["Staking APY"] = display_df["Staking APY"].apply(lambda x: f"{x*100:.1f}%")
-    display_df["Annual Yield"] = display_df["Annual Yield"].apply(lambda x: f"{x:,.0f}")
     display_df["Stock Price"] = display_df["Stock Price"].apply(
         lambda x: f"${x:.2f}" if x else "N/A"
     )
@@ -129,11 +127,20 @@ def render_asset_section(asset: str, companies: Dict[str, Any], asset_price: flo
         lambda x: format_large_number(x) if x else "N/A"
     )
 
-    # Display columns
-    columns_to_show = [
-        "Ticker", "Company", "Holdings", "Treasury Value",
-        "Unrealized P&L", "Staked %", "Staking APY", "Stock Price"
-    ]
+    # Display columns - BTC has no staking
+    if is_btc:
+        columns_to_show = [
+            "Ticker", "Company", "Holdings", "Treasury Value",
+            "Unrealized P&L", "P&L %", "Stock Price"
+        ]
+    else:
+        display_df["Staked %"] = display_df["Staked %"].apply(lambda x: f"{x*100:.0f}%")
+        display_df["Staking APY"] = display_df["Staking APY"].apply(lambda x: f"{x*100:.1f}%")
+        display_df["Annual Yield"] = display_df["Annual Yield"].apply(lambda x: f"{x:,.0f}")
+        columns_to_show = [
+            "Ticker", "Company", "Holdings", "Treasury Value",
+            "Unrealized P&L", "Staked %", "Staking APY", "Stock Price"
+        ]
 
     st.dataframe(
         display_df[columns_to_show],
@@ -144,18 +151,31 @@ def render_asset_section(asset: str, companies: Dict[str, Any], asset_price: flo
     # Summary stats
     total_holdings = df["Holdings"].sum()
     total_value = df["Treasury Value"].sum()
-    total_yield = df["Annual Yield"].sum()
-    total_yield_usd = df["Annual Yield USD"].sum()
+    total_pnl = df["Unrealized P&L"].sum()
 
-    col1, col2, col3, col4 = st.columns(4)
-    with col1:
-        st.metric(f"Total {asset}", f"{total_holdings:,.0f}")
-    with col2:
-        st.metric("Treasury Value", format_large_number(total_value))
-    with col3:
-        st.metric(f"Annual Yield", f"{total_yield:,.0f} {asset}")
-    with col4:
-        st.metric("Yield (USD)", format_large_number(total_yield_usd))
+    if is_btc:
+        # BTC: No staking yield, show P&L instead
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            st.metric(f"Total {asset}", f"{total_holdings:,.0f}")
+        with col2:
+            st.metric("Treasury Value", format_large_number(total_value))
+        with col3:
+            pnl_label = f"+{format_large_number(total_pnl)}" if total_pnl >= 0 else format_large_number(total_pnl)
+            st.metric("Unrealized P&L", pnl_label)
+    else:
+        # PoS chains: Show staking yield
+        total_yield = df["Annual Yield"].sum()
+        total_yield_usd = df["Annual Yield USD"].sum()
+        col1, col2, col3, col4 = st.columns(4)
+        with col1:
+            st.metric(f"Total {asset}", f"{total_holdings:,.0f}")
+        with col2:
+            st.metric("Treasury Value", format_large_number(total_value))
+        with col3:
+            st.metric(f"Annual Yield", f"{total_yield:,.0f} {asset}")
+        with col4:
+            st.metric("Yield (USD)", format_large_number(total_yield_usd))
 
     # Expandable details for each company
     with st.expander("Company Details"):
