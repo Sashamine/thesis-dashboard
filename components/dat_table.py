@@ -32,6 +32,8 @@ def build_dat_dataframe(eth_price: float, staking_apy: float = 0.035) -> pd.Data
         eth_holdings = company["eth_holdings"]
         staking_pct = company.get("staking_pct", 0)
         staking_method = company.get("staking_method", "N/A")
+        quarterly_burn_usd = company.get("quarterly_burn_usd", 0)
+        burn_source = company.get("burn_source", "")
         stock_price = stock.get("price", 0) or 0
         shares_outstanding = stock.get("shares_outstanding", 0) or 0
         market_cap = stock.get("market_cap", 0) or 0
@@ -48,6 +50,14 @@ def build_dat_dataframe(eth_price: float, staking_apy: float = 0.035) -> pd.Data
         annual_yield_eth = staked_eth * staking_apy
         annual_yield_usd = annual_yield_eth * eth_price
 
+        # Calculate burn rate
+        annual_burn_usd = quarterly_burn_usd * 4
+        annual_burn_eth = annual_burn_usd / eth_price if eth_price > 0 else 0
+
+        # Net productivity = yield - burn
+        net_annual_eth = annual_yield_eth - annual_burn_eth
+        net_annual_usd = annual_yield_usd - annual_burn_usd
+
         rows.append({
             "Ticker": ticker,
             "Company": company["name"],
@@ -58,6 +68,12 @@ def build_dat_dataframe(eth_price: float, staking_apy: float = 0.035) -> pd.Data
             "Staking Method": staking_method,
             "Annual Yield ETH": annual_yield_eth,
             "Annual Yield USD": annual_yield_usd,
+            "Quarterly Burn USD": quarterly_burn_usd,
+            "Annual Burn USD": annual_burn_usd,
+            "Annual Burn ETH": annual_burn_eth,
+            "Burn Source": burn_source,
+            "Net Annual ETH": net_annual_eth,
+            "Net Annual USD": net_annual_usd,
             "Treasury Value": nav,
             "Stock Price": stock_price,
             "Market Cap": market_cap,
@@ -205,67 +221,91 @@ def render_dat_table() -> None:
 
     # Company Productivity Section
     st.markdown("---")
-    st.subheader("Company Yield vs Pure Staking")
-    st.caption(f"Benchmark: {staking_apy*100:.2f}% APY if you staked ETH directly")
+    st.subheader("Company Productivity: Yield vs Burn")
+    st.caption(f"Network staking APY: {staking_apy*100:.2f}% | Showing annual figures")
 
-    # Calculate productivity metrics for each company
+    # Build productivity table
     productivity_data = []
     for _, row in df.iterrows():
         eth_holdings = row["ETH Holdings"]
-        staked_pct = row["Staked %"]
-        staked_eth = row["Staked ETH"]
         annual_yield_eth = row["Annual Yield ETH"]
+        annual_burn_eth = row["Annual Burn ETH"]
+        net_annual_eth = row["Net Annual ETH"]
+        quarterly_burn = row["Quarterly Burn USD"]
 
-        # What you'd earn if you just staked 100% of the ETH yourself
+        # What you'd earn if you just staked 100% yourself
         benchmark_yield = eth_holdings * staking_apy
 
-        # Effective yield rate for this company
-        effective_yield_rate = (annual_yield_eth / eth_holdings) if eth_holdings > 0 else 0
+        # Net productivity rate (yield - burn as % of holdings)
+        net_rate = (net_annual_eth / eth_holdings) if eth_holdings > 0 else 0
 
-        # Productivity vs benchmark (positive = better than staking yourself)
-        yield_vs_benchmark = annual_yield_eth - benchmark_yield
-        productivity_ratio = effective_yield_rate / staking_apy if staking_apy > 0 else 0
+        # Is the company net accretive or dilutive?
+        is_accretive = net_annual_eth > 0
 
         productivity_data.append({
             "Ticker": row["Ticker"],
-            "Company": row["Company"],
             "ETH Holdings": eth_holdings,
-            "Staked %": staked_pct,
-            "Staking Method": row["Staking Method"],
-            "Annual Yield (ETH)": annual_yield_eth,
-            "Effective APY": effective_yield_rate,
-            "Benchmark Yield": benchmark_yield,
-            "vs Benchmark": yield_vs_benchmark,
-            "Productivity": productivity_ratio,
+            "Staked %": row["Staked %"],
+            "Yield (ETH/yr)": annual_yield_eth,
+            "Burn (ETH/yr)": annual_burn_eth,
+            "Quarterly Burn": quarterly_burn,
+            "Net (ETH/yr)": net_annual_eth,
+            "Net Rate": net_rate,
+            "Accretive": is_accretive,
+            "Burn Source": row["Burn Source"],
         })
 
     prod_df = pd.DataFrame(productivity_data)
+
+    # Sort by net productivity (best first)
+    prod_df = prod_df.sort_values("Net (ETH/yr)", ascending=False)
 
     # Display as table
     display_prod = prod_df.copy()
     display_prod["ETH Holdings"] = display_prod["ETH Holdings"].apply(lambda x: f"{x:,.0f}")
     display_prod["Staked %"] = display_prod["Staked %"].apply(lambda x: f"{x*100:.0f}%")
-    display_prod["Annual Yield (ETH)"] = display_prod["Annual Yield (ETH)"].apply(lambda x: f"{x:,.0f}")
-    display_prod["Effective APY"] = display_prod["Effective APY"].apply(lambda x: f"{x*100:.2f}%")
-    display_prod["Benchmark Yield"] = display_prod["Benchmark Yield"].apply(lambda x: f"{x:,.0f}")
-    display_prod["vs Benchmark"] = display_prod["vs Benchmark"].apply(
+    display_prod["Yield (ETH/yr)"] = display_prod["Yield (ETH/yr)"].apply(lambda x: f"{x:,.0f}")
+    display_prod["Burn (ETH/yr)"] = display_prod["Burn (ETH/yr)"].apply(lambda x: f"{x:,.0f}")
+    display_prod["Quarterly Burn"] = display_prod["Quarterly Burn"].apply(lambda x: f"${x/1e6:.1f}M")
+    display_prod["Net (ETH/yr)"] = display_prod["Net (ETH/yr)"].apply(
         lambda x: f"+{x:,.0f}" if x >= 0 else f"{x:,.0f}"
     )
-    display_prod["Productivity"] = display_prod["Productivity"].apply(
-        lambda x: f"{x:.0%}" if x >= 1 else f"{x:.0%}"
+    display_prod["Net Rate"] = display_prod["Net Rate"].apply(
+        lambda x: f"+{x*100:.2f}%" if x >= 0 else f"{x*100:.2f}%"
+    )
+    display_prod["Status"] = display_prod["Accretive"].apply(
+        lambda x: "Accretive" if x else "Dilutive"
     )
 
     st.dataframe(
-        display_prod[["Ticker", "ETH Holdings", "Staked %", "Staking Method",
-                      "Annual Yield (ETH)", "Effective APY", "vs Benchmark", "Productivity"]],
+        display_prod[["Ticker", "ETH Holdings", "Staked %", "Yield (ETH/yr)",
+                      "Quarterly Burn", "Burn (ETH/yr)", "Net (ETH/yr)", "Net Rate", "Status"]],
         use_container_width=True,
         hide_index=True,
     )
 
+    # Summary metrics
+    col1, col2, col3 = st.columns(3)
+
+    total_yield = prod_df["Yield (ETH/yr)"].sum()
+    total_burn = prod_df["Burn (ETH/yr)"].sum()
+    total_net = prod_df["Net (ETH/yr)"].sum()
+    accretive_count = prod_df["Accretive"].sum()
+
+    with col1:
+        st.metric("Total Universe Yield", f"{total_yield:,.0f} ETH/yr")
+
+    with col2:
+        st.metric("Total Universe Burn", f"{total_burn:,.0f} ETH/yr")
+
+    with col3:
+        net_label = f"+{total_net:,.0f}" if total_net >= 0 else f"{total_net:,.0f}"
+        st.metric("Net Productivity", f"{net_label} ETH/yr",
+                  delta=f"{accretive_count}/{len(prod_df)} accretive")
+
     st.caption("""
-    **Effective APY** = Annual yield / ETH holdings (accounts for % actually staked)
-    **vs Benchmark** = Yield difference vs staking 100% yourself
-    **Productivity** = Effective APY / Network APY (100% = same as staking yourself, >100% = outperforming)
+    **Yield** = ETH earned from staking | **Burn** = Operational costs (from 10-Q) converted to ETH
+    **Net** = Yield - Burn | **Accretive** = Company grows ETH holdings | **Dilutive** = Company shrinks ETH holdings
     """)
 
 
