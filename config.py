@@ -193,6 +193,148 @@ DAT_COMPANIES = {
     },
 }
 
+# Solana DAT Companies (for tracking/news only)
+SOL_DAT_COMPANIES = {
+    "FWDI": {
+        "name": "Forward Industries",
+        "ticker": "FWDI",
+        "tier": 1,
+        "holdings": 6_921_342,  # Dec 2025
+        "asset": "SOL",
+        "cost_basis_avg": 232.08,  # per SOL
+        "staking_pct": 0.99,  # Nearly all staked
+        "staking_apy": 0.07,  # 6.82-7.01% gross APY
+        "leader": "Galaxy, Jump Crypto, Multicoin backed",
+        "strategy": "World's largest SOL treasury, validator infrastructure",
+        "notes": "Raised $1.65B PIPE. Debt free. Changed ticker from FORD to FWDI.",
+    },
+    "HSDT": {
+        "name": "Solana Company (fka Helius Medical)",
+        "ticker": "HSDT",
+        "tier": 1,
+        "holdings": 2_200_000,  # Oct 2025 estimate
+        "asset": "SOL",
+        "cost_basis_avg": 227.00,
+        "staking_pct": 0.95,
+        "staking_apy": 0.065,
+        "leader": "Pantera Capital, Summer Capital",
+        "strategy": "SOL treasury via Anchorage Digital custody",
+        "notes": "Raised $500M. Partnered with Solana Foundation for discounted SOL.",
+    },
+    "DFDV": {
+        "name": "DeFi Development Corp",
+        "ticker": "DFDV",
+        "tier": 1,
+        "holdings": 2_195_926,  # Oct 2025
+        "asset": "SOL",
+        "cost_basis_avg": 110.00,
+        "staking_pct": 0.90,
+        "staking_apy": 0.114,  # 11.4% organic yield reported
+        "leader": "Formerly Janover Inc.",
+        "strategy": "First US public company with SOL-focused treasury. Target 1 SPS by Dec 2028.",
+        "notes": "$5B ELOC. $4.6M quarterly revenue. Validator operations.",
+    },
+    "UPXI": {
+        "name": "Upexi",
+        "ticker": "UPXI",
+        "tier": 1,
+        "holdings": 2_106_989,  # Oct 2025
+        "asset": "SOL",
+        "cost_basis_avg": 157.66,
+        "staking_pct": 0.95,
+        "staking_apy": 0.08,  # ~8% yield
+        "leader": "Arthur Hayes (advisory)",
+        "strategy": "SOL treasury + consumer brands (Cure Mushrooms, Lucky Tail)",
+        "notes": "42% locked SOL at mid-teens discount. $50M buyback approved Nov 2025.",
+    },
+    "HODL": {
+        "name": "Sol Strategies",
+        "ticker": "HODL",  # CSE: HODL, NASDAQ: STKE
+        "tier": 2,
+        "holdings": 526_637,  # Nov 2025
+        "asset": "SOL",
+        "cost_basis_avg": 130.00,
+        "staking_pct": 0.85,
+        "staking_apy": 0.065,
+        "leader": "Canadian company",
+        "strategy": "Validator operations, staking provider for VanEck Solana ETF",
+        "notes": "3.7M SOL delegated. Selected as VanEck staking provider Nov 2025.",
+    },
+}
+
+# Hyperliquid DAT Companies (for tracking/news only)
+HYPE_DAT_COMPANIES = {
+    "PURR": {
+        "name": "Hyperliquid Strategies",
+        "ticker": "PURR",
+        "tier": 1,
+        "holdings": 12_600_000,  # Dec 2025 merger close
+        "asset": "HYPE",
+        "cost_basis_avg": 46.27,  # $583M / 12.6M
+        "staking_pct": 0.80,
+        "staking_apy": 0.05,
+        "leader": "David Schamis (CEO), Bob Diamond (Board)",
+        "strategy": "HYPE treasury via Sonnet merger. Staking + yield optimization.",
+        "notes": "Merged with Sonnet Dec 2025. $888M combined assets. $30M buyback.",
+    },
+    "HYPD": {
+        "name": "Hyperion DeFi (fka Eyenovia)",
+        "ticker": "HYPD",
+        "tier": 2,
+        "holdings": 1_712_195,  # Sep 2025
+        "asset": "HYPE",
+        "cost_basis_avg": 38.25,
+        "staking_pct": 0.90,
+        "staking_apy": 0.05,
+        "leader": "First US public HYPE treasury",
+        "strategy": "Validator node via Kinetiq. Aims to be largest HYPE holder.",
+        "notes": "Raised $50M PIPE. Rebranded from Eyenovia Jul 2025.",
+    },
+}
+
+# BNB DAT Companies (for tracking/news only)
+BNB_DAT_COMPANIES = {
+    "BNC": {
+        "name": "BNB Network Company (CEA Industries)",
+        "ticker": "BNC",
+        "tier": 1,
+        "holdings": 500_000,  # Dec 2025
+        "asset": "BNB",
+        "cost_basis_avg": 800.00,  # ~$400M for 500K
+        "staking_pct": 0.50,
+        "staking_apy": 0.03,
+        "leader": "YZi Labs (CZ family office) backed",
+        "strategy": "Target 1% of BNB supply. Largest corporate BNB holder.",
+        "notes": "$500M PIPE closed. YZi Labs owns 7% seeking board control. Rights plan adopted Dec 2025.",
+    },
+    "WINT": {
+        "name": "Windtree Therapeutics",
+        "ticker": "WINT",
+        "tier": 2,
+        "holdings": 100_000,  # Estimated from $520M commitment
+        "asset": "BNB",
+        "cost_basis_avg": 650.00,
+        "staking_pct": 0.40,
+        "staking_apy": 0.03,
+        "leader": "First US biopharma with BNB treasury",
+        "strategy": "$520M commitment for BNB via Kraken custody",
+        "notes": "$500M ELOC + $20M from Build & Build Corp. 99% for BNB acquisition.",
+    },
+    "NA": {
+        "name": "Nano Labs",
+        "ticker": "NA",
+        "tier": 2,
+        "holdings": 128_000,  # Jul 2025
+        "asset": "BNB",
+        "cost_basis_avg": 600.00,
+        "staking_pct": 0.30,
+        "staking_apy": 0.03,
+        "leader": "Hong Kong Web3 infrastructure",
+        "strategy": "BNB treasury via convertible notes",
+        "notes": "Issued $500M convertible notes (interest-free, 360 days) Jun 2025.",
+    },
+}
+
 # Phase Definitions
 PHASES = {
     "accumulation": {

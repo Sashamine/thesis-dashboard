@@ -23,6 +23,7 @@ from components.dat_detail import render_dat_detail_page, render_dat_selector
 from components.thesis_tracker import render_thesis_tracker, render_thesis_dependencies
 from components.charts import render_comparison_chart, render_eth_holdings_chart, render_nav_discount_chart
 from components.news_feed import render_news_page, render_news_feed
+from components.other_dats import render_other_dats_page
 from data import fetch_eth_price, fetch_stock_data, calculate_nav_discount, calculate_nav_per_share
 from utils import days_until, format_date
 
@@ -68,6 +69,7 @@ def render_sidebar() -> str:
                 "Home",
                 "News",
                 "DAT Universe",
+                "Other DATs",
                 "Company Details",
                 "Thesis Tracker",
                 "Charts & Analysis",
@@ -314,6 +316,9 @@ def main():
         render_dat_table()
         st.markdown("---")
         render_add_dat_form()
+
+    elif page == "Other DATs":
+        render_other_dats_page()
 
     elif page == "Company Details":
         ticker = render_dat_selector()
