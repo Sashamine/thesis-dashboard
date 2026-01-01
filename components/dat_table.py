@@ -222,11 +222,16 @@ def render_dat_table() -> None:
     # Company Productivity Section
     st.markdown("---")
     st.subheader("Company Productivity: Yield vs Burn")
-    st.caption(f"Network staking APY: {staking_apy*100:.2f}% | Showing annual figures")
+
+    from config import ETF_STAKING_YIELD
+    st.caption(f"Network staking: {staking_apy*100:.2f}% APY | ETF staking: {ETF_STAKING_YIELD*100:.1f}% APY (after fees)")
 
     # Build productivity table
     productivity_data = []
     for _, row in df.iterrows():
+        ticker = row["Ticker"]
+        company_config = DAT_COMPANIES.get(ticker, {})
+
         eth_holdings = row["ETH Holdings"]
         annual_yield_eth = row["Annual Yield ETH"]
         annual_burn_eth = row["Annual Burn ETH"]
@@ -235,15 +240,24 @@ def render_dat_table() -> None:
 
         # What you'd earn if you just staked 100% yourself
         benchmark_yield = eth_holdings * staking_apy
+        etf_benchmark = eth_holdings * ETF_STAKING_YIELD
 
         # Net productivity rate (yield - burn as % of holdings)
         net_rate = (net_annual_eth / eth_holdings) if eth_holdings > 0 else 0
+
+        # Yield multiples
+        yield_multiple_vs_staking = net_rate / staking_apy if staking_apy > 0 else 0
+        yield_multiple_vs_etf = net_rate / ETF_STAKING_YIELD if ETF_STAKING_YIELD > 0 else 0
+
+        # ETH from premium issuance (from config)
+        eth_from_premium = company_config.get("eth_from_premium", 0)
+        avg_premium = company_config.get("avg_issuance_premium", 0)
 
         # Is the company net accretive or dilutive?
         is_accretive = net_annual_eth > 0
 
         productivity_data.append({
-            "Ticker": row["Ticker"],
+            "Ticker": ticker,
             "ETH Holdings": eth_holdings,
             "Staked %": row["Staked %"],
             "Yield (ETH/yr)": annual_yield_eth,
@@ -251,8 +265,11 @@ def render_dat_table() -> None:
             "Quarterly Burn": quarterly_burn,
             "Net (ETH/yr)": net_annual_eth,
             "Net Rate": net_rate,
+            "Yield Multiple": yield_multiple_vs_staking,
+            "vs ETF": yield_multiple_vs_etf,
+            "ETH from Premium": eth_from_premium,
+            "Avg Premium": avg_premium,
             "Accretive": is_accretive,
-            "Burn Source": row["Burn Source"],
         })
 
     prod_df = pd.DataFrame(productivity_data)
@@ -273,39 +290,55 @@ def render_dat_table() -> None:
     display_prod["Net Rate"] = display_prod["Net Rate"].apply(
         lambda x: f"+{x*100:.2f}%" if x >= 0 else f"{x*100:.2f}%"
     )
+    display_prod["Yield Multiple"] = display_prod["Yield Multiple"].apply(
+        lambda x: f"{x:.2f}x" if x >= 0 else f"{x:.2f}x"
+    )
+    display_prod["vs ETF"] = display_prod["vs ETF"].apply(
+        lambda x: f"{x:.2f}x" if x >= 0 else f"{x:.2f}x"
+    )
+    display_prod["ETH from Premium"] = display_prod["ETH from Premium"].apply(
+        lambda x: f"+{x:,.0f}" if x > 0 else "-"
+    )
     display_prod["Status"] = display_prod["Accretive"].apply(
         lambda x: "Accretive" if x else "Dilutive"
     )
 
     st.dataframe(
-        display_prod[["Ticker", "ETH Holdings", "Staked %", "Yield (ETH/yr)",
-                      "Quarterly Burn", "Burn (ETH/yr)", "Net (ETH/yr)", "Net Rate", "Status"]],
+        display_prod[["Ticker", "ETH Holdings", "Yield (ETH/yr)", "Burn (ETH/yr)",
+                      "Net (ETH/yr)", "Net Rate", "Yield Multiple", "vs ETF",
+                      "ETH from Premium", "Status"]],
         use_container_width=True,
         hide_index=True,
     )
 
     # Summary metrics
-    col1, col2, col3 = st.columns(3)
+    col1, col2, col3, col4 = st.columns(4)
 
     total_yield = prod_df["Yield (ETH/yr)"].sum()
     total_burn = prod_df["Burn (ETH/yr)"].sum()
     total_net = prod_df["Net (ETH/yr)"].sum()
+    total_premium_eth = prod_df["ETH from Premium"].sum()
     accretive_count = prod_df["Accretive"].sum()
 
     with col1:
-        st.metric("Total Universe Yield", f"{total_yield:,.0f} ETH/yr")
+        st.metric("Total Yield", f"{total_yield:,.0f} ETH/yr")
 
     with col2:
-        st.metric("Total Universe Burn", f"{total_burn:,.0f} ETH/yr")
+        st.metric("Total Burn", f"{total_burn:,.0f} ETH/yr")
 
     with col3:
         net_label = f"+{total_net:,.0f}" if total_net >= 0 else f"{total_net:,.0f}"
         st.metric("Net Productivity", f"{net_label} ETH/yr",
                   delta=f"{accretive_count}/{len(prod_df)} accretive")
 
+    with col4:
+        st.metric("ETH from Premiums", f"+{total_premium_eth:,.0f} ETH",
+                  delta="YTD from issuance")
+
     st.caption("""
-    **Yield** = ETH earned from staking | **Burn** = Operational costs (from 10-Q) converted to ETH
-    **Net** = Yield - Burn | **Accretive** = Company grows ETH holdings | **Dilutive** = Company shrinks ETH holdings
+    **Yield Multiple** = Net Rate / Network Staking APY (>1x = outperforming pure staking)
+    **vs ETF** = Net Rate / ETF Staking Yield (>1x = outperforming staking ETFs)
+    **ETH from Premium** = ETH acquired by issuing shares above NAV (accretive dilution)
     """)
 
 

@@ -42,8 +42,12 @@ PERSONAL_MILESTONES = {
     "family_planning": "2027-06-01",  # Q2-Q3 2027
 }
 
+# Staking ETF benchmark (typical ETH staking ETF yields ~3.0-3.2% after fees)
+ETF_STAKING_YIELD = 0.032  # 3.2% - typical staking ETF yield after fees
+
 # DAT Company Definitions
 # Burn rates from latest 10-Q/10-K filings (quarterly opex in USD)
+# Premium issuance: ETH acquired by issuing shares above NAV
 DAT_COMPANIES = {
     # Tier 1: Major Players (>100k ETH)
     "BMNR": {
@@ -55,6 +59,10 @@ DAT_COMPANIES = {
         "staking_method": "MAVAN validators",
         "quarterly_burn_usd": 2_500_000,  # ~$2.5M/quarter opex from 10-Q
         "burn_source": "Q3 2025 10-Q",
+        # Premium issuance tracking (from S-3/424B filings)
+        "shares_issued_ytd": 25_000_000,  # Shares issued YTD
+        "avg_issuance_premium": 0.15,  # Avg 15% premium to NAV at issuance
+        "eth_from_premium": 150_000,  # ETH acquired from premium (calculated)
         "leader": "Tom Lee (Fundstrat)",
         "strategy": "5% of ETH supply goal, staking, MAVAN validators Q1 2026",
         "shares_outstanding": None,  # Will be fetched
@@ -69,6 +77,9 @@ DAT_COMPANIES = {
         "staking_method": "Linea/Lido",
         "quarterly_burn_usd": 3_200_000,  # ~$3.2M/quarter (gaming ops + crypto)
         "burn_source": "Q3 2025 10-Q",
+        "shares_issued_ytd": 15_000_000,
+        "avg_issuance_premium": 0.20,  # 20% premium
+        "eth_from_premium": 35_000,
         "leader": "Joe Lubin (Ethereum co-founder)",
         "strategy": "Staking, Linea partnership, tokenized equity via Superstate",
         "shares_outstanding": None,
@@ -83,6 +94,9 @@ DAT_COMPANIES = {
         "staking_method": "Native staking",
         "quarterly_burn_usd": 800_000,  # ~$800K/quarter (lean ops)
         "burn_source": "S-4 Filing 2025",
+        "shares_issued_ytd": 0,  # New company, SPAC merger
+        "avg_issuance_premium": 0,
+        "eth_from_premium": 0,
         "leader": "Andrew Keys",
         "strategy": "DeFi/staking 'machine' to grow ETH",
         "shares_outstanding": None,
@@ -97,6 +111,9 @@ DAT_COMPANIES = {
         "staking_method": "Native staking",
         "quarterly_burn_usd": 8_500_000,  # ~$8.5M/quarter (mining + staking ops)
         "burn_source": "Q3 2025 10-Q",
+        "shares_issued_ytd": 10_000_000,
+        "avg_issuance_premium": 0.10,
+        "eth_from_premium": 5_000,
         "leader": "Sam Tabar",
         "strategy": "90% staked, fully exited BTC",
         "shares_outstanding": None,
@@ -112,6 +129,9 @@ DAT_COMPANIES = {
         "staking_method": "Native staking",
         "quarterly_burn_usd": 1_200_000,  # ~$1.2M/quarter
         "burn_source": "Q3 2025 10-Q",
+        "shares_issued_ytd": 5_000_000,
+        "avg_issuance_premium": 0.12,
+        "eth_from_premium": 3_500,
         "leader": "Peter Thiel backed",
         "strategy": "Share buybacks",
         "shares_outstanding": None,
@@ -126,6 +146,9 @@ DAT_COMPANIES = {
         "staking_method": "Builder+ validators",
         "quarterly_burn_usd": 1_800_000,  # ~$1.8M/quarter
         "burn_source": "Q3 2025 10-Q",
+        "shares_issued_ytd": 8_000_000,
+        "avg_issuance_premium": 0.08,
+        "eth_from_premium": 2_000,
         "leader": "",
         "strategy": "ETH 'Bividend,' DeFi/TradFi flywheel, Builder+",
         "shares_outstanding": None,
@@ -140,6 +163,9 @@ DAT_COMPANIES = {
         "staking_method": "Lido/stETH",
         "quarterly_burn_usd": 12_000_000,  # ~$12M/quarter (esports/gaming ops)
         "burn_source": "Q3 2025 10-Q",
+        "shares_issued_ytd": 20_000_000,
+        "avg_issuance_premium": 0.05,
+        "eth_from_premium": 500,
         "leader": "",
         "strategy": "$250M authorization for more",
         "shares_outstanding": None,
@@ -154,6 +180,9 @@ DAT_COMPANIES = {
         "staking_method": "Lido/stETH",
         "quarterly_burn_usd": 2_000_000,  # ~$2M/quarter (insurance ops)
         "burn_source": "Q3 2025 10-Q",
+        "shares_issued_ytd": 3_000_000,
+        "avg_issuance_premium": 0.06,
+        "eth_from_premium": 300,
         "leader": "",
         "strategy": "Insurance/reinsurance pivot",
         "shares_outstanding": None,
