@@ -198,37 +198,46 @@ def render_productivity_section(asset: str, companies: Dict[str, Any], asset_pri
 
         # Yield calculation depends on asset type
         if is_btc:
-            # BTC: Yield = Mining production
-            annual_yield_tokens = company.get("btc_mined_annual", 0)
+            # BTC: Use actual 2025 acquisition rate (more accurate than premium calc)
+            # This captures mining + purchases - sales = net BTC added
+            annual_acquired = company.get("btc_acquired_2025", 0)
+            annual_yield_tokens = company.get("btc_mined_annual", 0)  # For display only
             is_miner = company.get("is_miner", False)
         else:
-            # PoS chains: Yield = Staking rewards
+            # PoS chains: Yield = Staking rewards + Annualized premium
             staking_pct = company.get("staking_pct", 0)
             staking_apy = company.get("staking_apy", 0)
             staked_holdings = holdings * staking_pct
             annual_yield_tokens = staked_holdings * staking_apy
             is_miner = False
 
+            # Premium capture - annualized based on company age
+            from_premium = company.get(premium_field, 0)
+            dat_start_str = company.get("dat_start_date", "2024-01-01")
+            try:
+                dat_start = datetime.strptime(dat_start_str, "%Y-%m-%d")
+                months_active = max(1, (today - dat_start).days / 30.44)
+                years_active = months_active / 12
+            except:
+                years_active = 1.0
+            annualized_premium = from_premium / years_active if years_active > 0 else 0
+            annual_acquired = annual_yield_tokens + annualized_premium
+
         annual_yield_usd = annual_yield_tokens * asset_price
-
-        # Premium capture - annualized based on company age
-        from_premium = company.get(premium_field, 0)
-        dat_start_str = company.get("dat_start_date", "2024-01-01")
-        try:
-            dat_start = datetime.strptime(dat_start_str, "%Y-%m-%d")
-            months_active = max(1, (today - dat_start).days / 30.44)
-            years_active = months_active / 12
-        except:
-            years_active = 1.0
-
-        annualized_premium = from_premium / years_active if years_active > 0 else 0
 
         # Annual burn in tokens
         annual_burn_usd = quarterly_burn_usd * 4
         annual_burn_tokens = annual_burn_usd / asset_price if asset_price > 0 else 0
 
-        # Total productivity = Yield + Premium - Burn
-        total_tokens = annual_yield_tokens + annualized_premium - annual_burn_tokens
+        # Total productivity
+        if is_btc:
+            # BTC: Use actual acquisition rate (already net of sales)
+            # Burn is already reflected in reduced acquisition ability
+            total_tokens = annual_acquired
+        else:
+            # PoS: Yield + Premium - Burn
+            total_tokens = annual_acquired - annual_burn_tokens
+
         total_usd = total_tokens * asset_price
 
         # Net rate (as % of holdings)
@@ -245,56 +254,75 @@ def render_productivity_section(asset: str, companies: Dict[str, Any], asset_pri
         # Is accretive?
         is_accretive = total_tokens > 0
 
-        productivity_data.append({
-            "Ticker": ticker,
-            "Holdings": holdings,
-            "Is Miner": is_miner,
-            f"Yield ({asset}/yr)": annual_yield_tokens,
-            f"Premium ({asset}/yr)": annualized_premium,
-            f"Burn ({asset}/yr)": annual_burn_tokens,
-            f"Total ({asset}/yr)": total_tokens,
-            "Total (USD/yr)": total_usd,
-            "Net Rate": net_rate,
-            "Yield Multiple": yield_multiple,
-            "Accretive": is_accretive,
-        })
+        if is_btc:
+            productivity_data.append({
+                "Ticker": ticker,
+                "Holdings": holdings,
+                "Is Miner": is_miner,
+                "Mining (BTC/yr)": annual_yield_tokens,
+                "Net Acquired 2025": annual_acquired,
+                "Net Rate": net_rate,
+                "Accretive": is_accretive,
+            })
+        else:
+            productivity_data.append({
+                "Ticker": ticker,
+                "Holdings": holdings,
+                f"Yield ({asset}/yr)": annual_yield_tokens,
+                f"Premium ({asset}/yr)": annualized_premium,
+                f"Burn ({asset}/yr)": annual_burn_tokens,
+                f"Total ({asset}/yr)": total_tokens,
+                "Total (USD/yr)": total_usd,
+                "Net Rate": net_rate,
+                "Yield Multiple": yield_multiple,
+                "Accretive": is_accretive,
+            })
 
     prod_df = pd.DataFrame(productivity_data)
 
-    # Sort by total productivity
-    prod_df = prod_df.sort_values(f"Total ({asset}/yr)", ascending=False)
+    # Sort by appropriate column
+    if is_btc:
+        prod_df = prod_df.sort_values("Net Acquired 2025", ascending=False)
+    else:
+        prod_df = prod_df.sort_values(f"Total ({asset}/yr)", ascending=False)
 
     # Format for display
     display_prod = prod_df.copy()
     display_prod["Holdings"] = display_prod["Holdings"].apply(lambda x: f"{x:,.0f}")
+
     if is_btc:
         display_prod["Type"] = display_prod["Is Miner"].apply(lambda x: "Miner" if x else "Treasury")
-    display_prod[f"Yield ({asset}/yr)"] = display_prod[f"Yield ({asset}/yr)"].apply(lambda x: f"{x:,.0f}")
-    display_prod[f"Premium ({asset}/yr)"] = display_prod[f"Premium ({asset}/yr)"].apply(
-        lambda x: f"+{x:,.0f}" if x > 0 else "-"
-    )
-    display_prod[f"Burn ({asset}/yr)"] = display_prod[f"Burn ({asset}/yr)"].apply(lambda x: f"{x:,.0f}")
-    display_prod[f"Total ({asset}/yr)"] = display_prod[f"Total ({asset}/yr)"].apply(
-        lambda x: f"+{x:,.0f}" if x >= 0 else f"{x:,.0f}"
-    )
-    display_prod["Net Rate"] = display_prod["Net Rate"].apply(
-        lambda x: f"+{x*100:.1f}%" if x >= 0 else f"{x*100:.1f}%"
-    )
-    if not is_btc:
+        display_prod["Mining (BTC/yr)"] = display_prod["Mining (BTC/yr)"].apply(lambda x: f"{x:,.0f}" if x > 0 else "-")
+        display_prod["Net Acquired 2025"] = display_prod["Net Acquired 2025"].apply(
+            lambda x: f"+{x:,.0f}" if x >= 0 else f"{x:,.0f}"
+        )
+        display_prod["Net Rate"] = display_prod["Net Rate"].apply(
+            lambda x: f"+{x*100:.1f}%" if x >= 0 else f"{x*100:.1f}%"
+        )
+        display_prod["Status"] = display_prod["Accretive"].apply(
+            lambda x: "Accretive" if x else "Dilutive"
+        )
+        columns_to_show = [
+            "Ticker", "Type", "Holdings", "Mining (BTC/yr)", "Net Acquired 2025", "Net Rate", "Status"
+        ]
+    else:
+        display_prod[f"Yield ({asset}/yr)"] = display_prod[f"Yield ({asset}/yr)"].apply(lambda x: f"{x:,.0f}")
+        display_prod[f"Premium ({asset}/yr)"] = display_prod[f"Premium ({asset}/yr)"].apply(
+            lambda x: f"+{x:,.0f}" if x > 0 else "-"
+        )
+        display_prod[f"Burn ({asset}/yr)"] = display_prod[f"Burn ({asset}/yr)"].apply(lambda x: f"{x:,.0f}")
+        display_prod[f"Total ({asset}/yr)"] = display_prod[f"Total ({asset}/yr)"].apply(
+            lambda x: f"+{x:,.0f}" if x >= 0 else f"{x:,.0f}"
+        )
+        display_prod["Net Rate"] = display_prod["Net Rate"].apply(
+            lambda x: f"+{x*100:.1f}%" if x >= 0 else f"{x*100:.1f}%"
+        )
         display_prod["Yield Multiple"] = display_prod["Yield Multiple"].apply(
             lambda x: f"{x:.1f}x" if x >= 0 else f"{x:.1f}x"
         )
-    display_prod["Status"] = display_prod["Accretive"].apply(
-        lambda x: "Accretive" if x else "Dilutive"
-    )
-
-    # Display table - different columns for BTC vs PoS
-    if is_btc:
-        columns_to_show = [
-            "Ticker", "Type", "Holdings", f"Yield ({asset}/yr)", f"Premium ({asset}/yr)",
-            f"Burn ({asset}/yr)", f"Total ({asset}/yr)", "Net Rate", "Status"
-        ]
-    else:
+        display_prod["Status"] = display_prod["Accretive"].apply(
+            lambda x: "Accretive" if x else "Dilutive"
+        )
         columns_to_show = [
             "Ticker", "Holdings", f"Yield ({asset}/yr)", f"Premium ({asset}/yr)",
             f"Burn ({asset}/yr)", f"Total ({asset}/yr)", "Net Rate", "Yield Multiple", "Status"
@@ -307,38 +335,54 @@ def render_productivity_section(asset: str, companies: Dict[str, Any], asset_pri
     )
 
     # Summary metrics
-    col1, col2, col3, col4 = st.columns(4)
-
-    total_yield = prod_df[f"Yield ({asset}/yr)"].sum()
-    total_premium = prod_df[f"Premium ({asset}/yr)"].sum()
-    total_burn = prod_df[f"Burn ({asset}/yr)"].sum()
-    total_productivity = prod_df[f"Total ({asset}/yr)"].sum()
     accretive_count = prod_df["Accretive"].sum()
 
-    with col1:
-        yield_label = "Mining Yield" if is_btc else "Staking Yield"
-        st.metric(yield_label, f"{total_yield:,.0f} {asset}/yr")
-
-    with col2:
-        st.metric("Premium Capture", f"+{total_premium:,.0f} {asset}/yr",
-                  delta="annualized")
-
-    with col3:
-        st.metric("Operating Burn", f"-{total_burn:,.0f} {asset}/yr")
-
-    with col4:
-        total_label = f"+{total_productivity:,.0f}" if total_productivity >= 0 else f"{total_productivity:,.0f}"
-        st.metric("Total Productivity", f"{total_label} {asset}/yr",
-                  delta=f"{int(accretive_count)}/{len(prod_df)} accretive")
-
     if is_btc:
+        col1, col2, col3 = st.columns(3)
+        total_mining = prod_df["Mining (BTC/yr)"].sum()
+        total_acquired = prod_df["Net Acquired 2025"].sum()
+
+        with col1:
+            st.metric("Total Mining", f"{total_mining:,.0f} BTC/yr")
+
+        with col2:
+            acq_label = f"+{total_acquired:,.0f}" if total_acquired >= 0 else f"{total_acquired:,.0f}"
+            st.metric("Net Acquired 2025", f"{acq_label} BTC",
+                      delta=f"{int(accretive_count)}/{len(prod_df)} accretive")
+
+        with col3:
+            total_holdings = prod_df["Holdings"].sum()
+            avg_rate = (total_acquired / total_holdings * 100) if total_holdings > 0 else 0
+            st.metric("Avg Net Rate", f"+{avg_rate:.1f}%")
+
         st.caption("""
-        **Yield** = BTC mined annually (miners) or 0 (pure treasury)
-        **Premium** = BTC from premium issuance / Years active (annualized)
-        **Total** = Yield + Premium - Burn
-        **Net Rate** = Total / Holdings (as annual %)
+        **Mining (BTC/yr)** = Annual BTC production from mining operations
+        **Net Acquired 2025** = Total BTC added in 2025 (mining + purchases - sales)
+        **Net Rate** = Net Acquired / Holdings (as annual %)
+        **Accretive** = Company grew its BTC stack in 2025
         """)
     else:
+        col1, col2, col3, col4 = st.columns(4)
+        total_yield = prod_df[f"Yield ({asset}/yr)"].sum()
+        total_premium = prod_df[f"Premium ({asset}/yr)"].sum()
+        total_burn = prod_df[f"Burn ({asset}/yr)"].sum()
+        total_productivity = prod_df[f"Total ({asset}/yr)"].sum()
+
+        with col1:
+            st.metric("Staking Yield", f"{total_yield:,.0f} {asset}/yr")
+
+        with col2:
+            st.metric("Premium Capture", f"+{total_premium:,.0f} {asset}/yr",
+                      delta="annualized")
+
+        with col3:
+            st.metric("Operating Burn", f"-{total_burn:,.0f} {asset}/yr")
+
+        with col4:
+            total_label = f"+{total_productivity:,.0f}" if total_productivity >= 0 else f"{total_productivity:,.0f}"
+            st.metric("Total Productivity", f"{total_label} {asset}/yr",
+                      delta=f"{int(accretive_count)}/{len(prod_df)} accretive")
+
         st.caption(f"""
         **Yield** = Staked {asset} × Staking APY (annual staking rewards)
         **Premium** = {asset} from premium issuance / Years active (annualized)

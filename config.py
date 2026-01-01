@@ -448,116 +448,108 @@ BNB_DAT_COMPANIES = {
 # Bitcoin DAT Companies (the OG treasury strategy)
 # Yield sources: Mining production (miners) or Premium issuance (treasury cos)
 # BTC has no native staking - miners produce BTC, treasury cos capture premium
-# Premium methodology same as ETH: Capital Raised × (Avg Premium / (1 + Avg Premium)) / BTC Price
+# Using btc_acquired_2025 for actual annual acquisition rate (more accurate than premium calc)
 BTC_DAT_COMPANIES = {
     "MSTR": {
-        "name": "MicroStrategy",
+        "name": "Strategy (fka MicroStrategy)",
         "ticker": "MSTR",
         "tier": 1,
-        "dat_start_date": "2020-08-01",  # OG - started Aug 2020
-        "holdings": 446_400,  # Dec 2025 - largest corporate BTC holder
+        "dat_start_date": "2024-01-01",  # Use 2024 as base - when 21/21 plan started
+        "holdings": 672_497,  # Dec 29, 2025 - per strategy.com/purchases
         "asset": "BTC",
-        "cost_basis_avg": 62_500,  # ~$27.9B total cost
+        "cost_basis_avg": 74_997,  # $50.44B / 672K BTC
         "is_miner": False,
         "btc_mined_annual": 0,  # Pure treasury, no mining
+        # Actual 2025 acquisition - more accurate than premium calc
+        "btc_acquired_2025": 257_000,  # Added ~257K BTC in 2025 (from ~415K to 672K)
         "staking_pct": 0,
         "staking_apy": 0,
         "quarterly_burn_usd": 15_000_000,  # Software biz + treasury ops
         "burn_source": "Q3 2025 10-Q",
-        # Premium issuance: ~$20B ATM + $3B converts at massive premiums (trades at 2x NAV)
-        "capital_raised_atm": 20_000_000_000,
-        "capital_raised_converts": 3_000_000_000,
-        "avg_issuance_premium": 0.50,  # Trades at 2x NAV, issues at ~1.5x avg
-        "btc_from_premium": 76_700,  # $20B × (0.50/1.50) / $87K = 76.7K BTC
+        # Premium issuance tracking (for reference)
+        "capital_raised_2025": 22_000_000_000,  # ~$22B raised in 2025 via ATM/converts
+        "avg_issuance_premium": 0.50,  # Trades at ~2x NAV
+        "btc_from_premium": 73_000,  # Estimate: $22B × (0.50/1.50) / $100K
         "leader": "Michael Saylor (Executive Chairman)",
-        "strategy": "OG Bitcoin treasury. 21/21 Plan: $21B equity + $21B debt for BTC.",
-        "notes": "Started Aug 2020. $46B market cap. Trades at ~2x NAV. S&P 500 pending.",
+        "strategy": "21/21 Plan: $21B equity + $21B debt for BTC. Rebranded to Strategy Feb 2025.",
+        "notes": "672K BTC @ $75K avg. Trades at ~2x NAV. Largest corporate BTC holder.",
     },
     "MARA": {
         "name": "Marathon Digital",
         "ticker": "MARA",
         "tier": 1,
-        "dat_start_date": "2021-01-01",  # HODL strategy formalized 2021
-        "holdings": 44_394,  # Dec 2025
+        "dat_start_date": "2024-01-01",
+        "holdings": 44_893,  # Dec 2025 per bitcointreasuries.net
         "asset": "BTC",
         "cost_basis_avg": 43_000,
         "is_miner": True,
-        "btc_mined_annual": 15_000,  # ~50 EH/s, ~1,250 BTC/month
+        "btc_mined_annual": 18_000,  # ~50 EH/s, ~1,500 BTC/month production
+        "btc_acquired_2025": 22_000,  # Net additions in 2025 (mined + bought - sold)
         "staking_pct": 0,
         "staking_apy": 0,
         "quarterly_burn_usd": 85_000_000,  # Mining ops (power, hosting, depreciation)
         "burn_source": "Q3 2025 10-Q",
-        # Premium issuance: ~$2B zero-coupon converts + ATM
-        "capital_raised_atm": 1_500_000_000,
-        "capital_raised_converts": 1_000_000_000,
-        "avg_issuance_premium": 0.15,
-        "btc_from_premium": 3_200,  # $2.5B × (0.15/1.15) / $100K
+        "btc_from_premium": 4_000,  # From converts/ATM premium
         "leader": "Fred Thiel (CEO)",
         "strategy": "HODL miner - keeps all mined BTC. 50 EH/s hashrate.",
-        "notes": "Largest US public miner. 'HODL' strategy since 2024. Zero-coupon converts.",
+        "notes": "Largest US public miner. 'HODL' strategy. Zero-coupon converts.",
     },
     "RIOT": {
         "name": "Riot Platforms",
         "ticker": "RIOT",
         "tier": 1,
-        "dat_start_date": "2021-01-01",
+        "dat_start_date": "2024-01-01",
         "holdings": 17_722,  # Dec 2025
         "asset": "BTC",
         "cost_basis_avg": 39_000,
         "is_miner": True,
-        "btc_mined_annual": 8_500,  # ~30 EH/s operational
+        "btc_mined_annual": 6_000,  # ~30 EH/s, but sells some for ops
+        "btc_acquired_2025": 3_000,  # Net - sells some BTC
         "staking_pct": 0,
         "staking_apy": 0,
         "quarterly_burn_usd": 120_000_000,  # Mining + Corsicana facility ramp
         "burn_source": "Q3 2025 10-Q",
-        "capital_raised_atm": 800_000_000,
-        "capital_raised_converts": 500_000_000,
-        "avg_issuance_premium": 0.10,
-        "btc_from_premium": 1_200,
+        "btc_from_premium": 1_500,
         "leader": "Jason Les (CEO)",
         "strategy": "1 GW Corsicana facility. Mining + data center pivot.",
-        "notes": "Sold some BTC in 2025. Activist pressure from Starboard Value.",
+        "notes": "Sells some BTC for ops. Activist pressure from Starboard Value.",
     },
     "CLSK": {
         "name": "CleanSpark",
         "ticker": "CLSK",
         "tier": 1,
-        "dat_start_date": "2021-06-01",
-        "holdings": 10_097,  # Dec 2025
+        "dat_start_date": "2024-01-01",
+        "holdings": 10_556,  # Dec 2025
         "asset": "BTC",
         "cost_basis_avg": 45_000,
         "is_miner": True,
-        "btc_mined_annual": 10_000,  # ~37 EH/s target
+        "btc_mined_annual": 9_000,  # ~37 EH/s
+        "btc_acquired_2025": 5_500,  # Net additions
         "staking_pct": 0,
         "staking_apy": 0,
         "quarterly_burn_usd": 65_000_000,  # Mining ops
         "burn_source": "Q4 2025 10-Q",
-        "capital_raised_atm": 600_000_000,
-        "capital_raised_converts": 0,
-        "avg_issuance_premium": 0.10,
-        "btc_from_premium": 550,
+        "btc_from_premium": 600,
         "leader": "Zach Bradford (CEO)",
-        "strategy": "Efficient US miner. 37 EH/s target.",
+        "strategy": "Efficient US miner. 37 EH/s.",
         "notes": "Acquired GRIID. Aggressive expansion in Georgia/Mississippi.",
     },
     "HUT": {
         "name": "Hut 8",
         "ticker": "HUT",
         "tier": 1,
-        "dat_start_date": "2021-01-01",
-        "holdings": 10_096,  # Dec 2025
+        "dat_start_date": "2024-01-01",
+        "holdings": 10_208,  # Dec 2025
         "asset": "BTC",
         "cost_basis_avg": 24_000,  # Lowest cost basis among majors
         "is_miner": True,
-        "btc_mined_annual": 2_500,  # 7.5 EH/s
+        "btc_mined_annual": 2_800,  # 7.5 EH/s
+        "btc_acquired_2025": 1_500,  # Net - HODL strategy
         "staking_pct": 0,
         "staking_apy": 0,
         "quarterly_burn_usd": 45_000_000,  # Mining + HPC/AI pivot
         "burn_source": "Q3 2025 10-Q",
-        "capital_raised_atm": 400_000_000,
-        "capital_raised_converts": 0,
-        "avg_issuance_premium": 0.08,
-        "btc_from_premium": 300,
+        "btc_from_premium": 400,
         "leader": "Asher Genoot (CEO)",
         "strategy": "HODL + AI/HPC diversification. 7.5 EH/s.",
         "notes": "Merged with USBTC. Canadian origin. Expanding to AI data centers.",
@@ -566,42 +558,37 @@ BTC_DAT_COMPANIES = {
         "name": "Strive Asset Management",
         "ticker": "ASST",
         "tier": 1,
-        "dat_start_date": "2024-05-01",  # Semler started May 2024, Strive merger Sep 2025
+        "dat_start_date": "2024-05-01",  # Semler started May 2024
         "holdings": 10_900,  # Post-merger with Semler
         "asset": "BTC",
         "cost_basis_avg": 100_000,
         "is_miner": False,
         "btc_mined_annual": 0,  # Pure treasury
+        "btc_acquired_2025": 8_500,  # Semler + Strive buys in 2025
         "staking_pct": 0,
         "staking_apy": 0,
         "quarterly_burn_usd": 12_000_000,  # Asset mgmt + medical device ops
         "burn_source": "Q3 2025 10-Q estimate",
-        # Strive: $675M PIPE at $116K, Semler: ~$280M ATM
-        "capital_raised_atm": 280_000_000,
-        "capital_raised_pipe": 675_000_000,
-        "avg_issuance_premium": 0.15,  # Conservative - new to market
-        "btc_from_premium": 1_200,
+        "btc_from_premium": 1_500,  # From premium issuance
         "leader": "Vivek Ramaswamy (Co-Founder)",
         "strategy": "First publicly traded asset mgmt BTC treasury. 'Preferred equity only' model.",
-        "notes": "Acquired Semler Scientific Sep 2025 ($1.4B). Bought 5,816 BTC at $116K. $2B AUM.",
+        "notes": "Acquired Semler Scientific Sep 2025 ($1.4B). $2B AUM.",
     },
     "BITF": {
         "name": "Bitfarms",
         "ticker": "BITF",
         "tier": 2,
-        "dat_start_date": "2021-01-01",
+        "dat_start_date": "2024-01-01",
         "holdings": 1_188,  # Dec 2025 (reduced - sells monthly)
         "asset": "BTC",
         "cost_basis_avg": 55_000,
         "is_miner": True,
-        "btc_mined_annual": 3_500,  # 12 EH/s, but sells most
+        "btc_mined_annual": 3_500,  # 12 EH/s production
+        "btc_acquired_2025": -500,  # Net negative - sells more than mines
         "staking_pct": 0,
         "staking_apy": 0,
         "quarterly_burn_usd": 50_000_000,  # Mining ops
         "burn_source": "Q3 2025 10-Q",
-        "capital_raised_atm": 200_000_000,
-        "capital_raised_converts": 0,
-        "avg_issuance_premium": 0.05,
         "btc_from_premium": 100,
         "leader": "Ben Gagnon (CEO)",
         "strategy": "Monthly BTC sales for operations. 12 EH/s.",
@@ -611,19 +598,17 @@ BTC_DAT_COMPANIES = {
         "name": "TeraWulf",
         "ticker": "WULF",
         "tier": 2,
-        "dat_start_date": "2022-01-01",
+        "dat_start_date": "2024-01-01",
         "holdings": 699,  # Dec 2025 (sells most production)
         "asset": "BTC",
         "cost_basis_avg": 60_000,
         "is_miner": True,
-        "btc_mined_annual": 3_000,  # ~10 EH/s, sells most
+        "btc_mined_annual": 3_000,  # ~10 EH/s production
+        "btc_acquired_2025": -200,  # Net negative - sells most production
         "staking_pct": 0,
         "staking_apy": 0,
         "quarterly_burn_usd": 35_000_000,  # Mining ops
         "burn_source": "Q3 2025 10-Q",
-        "capital_raised_atm": 150_000_000,
-        "capital_raised_converts": 0,
-        "avg_issuance_premium": 0.05,
         "btc_from_premium": 75,
         "leader": "Paul Prager (CEO)",
         "strategy": "Zero-carbon miner. Lake Mariner facility (NY).",
@@ -639,13 +624,11 @@ BTC_DAT_COMPANIES = {
         "cost_basis_avg": 97_000,
         "is_miner": False,
         "btc_mined_annual": 0,  # Pure treasury
+        "btc_acquired_2025": 510,  # All acquired in Dec 2024/Jan 2025
         "staking_pct": 0,
         "staking_apy": 0,
         "quarterly_burn_usd": 4_000_000,  # Battery tech + treasury ops
         "burn_source": "Q3 2025 10-Q",
-        "capital_raised_atm": 50_000_000,
-        "capital_raised_converts": 0,
-        "avg_issuance_premium": 0.05,
         "btc_from_premium": 25,
         "leader": "Michael Mo (CEO)",
         "strategy": "Battery/thermal tech company with BTC treasury.",
@@ -655,19 +638,17 @@ BTC_DAT_COMPANIES = {
         "name": "Cipher Mining",
         "ticker": "CIFR",
         "tier": 2,
-        "dat_start_date": "2021-08-01",
+        "dat_start_date": "2024-01-01",
         "holdings": 1_034,  # Dec 2025
         "asset": "BTC",
         "cost_basis_avg": 50_000,
         "is_miner": True,
         "btc_mined_annual": 2_500,  # 8.7 EH/s
+        "btc_acquired_2025": 500,  # Net - sells some for ops
         "staking_pct": 0,
         "staking_apy": 0,
         "quarterly_burn_usd": 40_000_000,  # Mining ops
         "burn_source": "Q3 2025 10-Q",
-        "capital_raised_atm": 200_000_000,
-        "capital_raised_converts": 0,
-        "avg_issuance_premium": 0.05,
         "btc_from_premium": 100,
         "leader": "Tyler Page (CEO)",
         "strategy": "Texas-based miner. HPC pivot.",
