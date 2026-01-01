@@ -4,6 +4,7 @@ Displays sortable table of all DAT companies with key metrics
 """
 import streamlit as st
 import pandas as pd
+from datetime import datetime
 from typing import Dict, Any, List
 from config import DAT_COMPANIES
 from data import (
@@ -228,6 +229,8 @@ def render_dat_table() -> None:
 
     # Build productivity table
     productivity_data = []
+    today = datetime.now()
+
     for _, row in df.iterrows():
         ticker = row["Ticker"]
         company_config = DAT_COMPANIES.get(ticker, {})
@@ -235,26 +238,32 @@ def render_dat_table() -> None:
         eth_holdings = row["ETH Holdings"]
         annual_yield_eth = row["Annual Yield ETH"]
         annual_burn_eth = row["Annual Burn ETH"]
-        net_annual_eth = row["Net Annual ETH"]
         quarterly_burn = row["Quarterly Burn USD"]
 
-        # What you'd earn if you just staked 100% yourself
-        benchmark_yield = eth_holdings * staking_apy
-        etf_benchmark = eth_holdings * ETF_STAKING_YIELD
+        # ETH from premium issuance (from config)
+        eth_from_premium = company_config.get("eth_from_premium", 0)
 
-        # Net productivity rate (yield - burn as % of holdings)
-        net_rate = (net_annual_eth / eth_holdings) if eth_holdings > 0 else 0
+        # Calculate months active to annualize premium
+        dat_start_str = company_config.get("dat_start_date", "2024-01-01")
+        dat_start = datetime.strptime(dat_start_str, "%Y-%m-%d")
+        months_active = max(1, (today - dat_start).days / 30.44)  # Avg days per month
+        years_active = months_active / 12
+
+        # Annualize premium capture
+        annualized_premium_eth = eth_from_premium / years_active if years_active > 0 else 0
+
+        # Total productivity = Yield - Burn + Annualized Premium
+        total_annual_eth = annual_yield_eth - annual_burn_eth + annualized_premium_eth
+
+        # Net productivity rate including premium (as % of holdings)
+        net_rate = (total_annual_eth / eth_holdings) if eth_holdings > 0 else 0
 
         # Yield multiples
         yield_multiple_vs_staking = net_rate / staking_apy if staking_apy > 0 else 0
         yield_multiple_vs_etf = net_rate / ETF_STAKING_YIELD if ETF_STAKING_YIELD > 0 else 0
 
-        # ETH from premium issuance (from config)
-        eth_from_premium = company_config.get("eth_from_premium", 0)
-        avg_premium = company_config.get("avg_issuance_premium", 0)
-
-        # Is the company net accretive or dilutive?
-        is_accretive = net_annual_eth > 0
+        # Is the company net accretive or dilutive (including premium)?
+        is_accretive = total_annual_eth > 0
 
         productivity_data.append({
             "Ticker": ticker,
@@ -263,19 +272,20 @@ def render_dat_table() -> None:
             "Yield (ETH/yr)": annual_yield_eth,
             "Burn (ETH/yr)": annual_burn_eth,
             "Quarterly Burn": quarterly_burn,
-            "Net (ETH/yr)": net_annual_eth,
+            "Premium (ETH/yr)": annualized_premium_eth,
+            "Total (ETH/yr)": total_annual_eth,
             "Net Rate": net_rate,
             "Yield Multiple": yield_multiple_vs_staking,
             "vs ETF": yield_multiple_vs_etf,
+            "Months Active": months_active,
             "ETH from Premium": eth_from_premium,
-            "Avg Premium": avg_premium,
             "Accretive": is_accretive,
         })
 
     prod_df = pd.DataFrame(productivity_data)
 
-    # Sort by net productivity (best first)
-    prod_df = prod_df.sort_values("Net (ETH/yr)", ascending=False)
+    # Sort by total productivity (best first)
+    prod_df = prod_df.sort_values("Total (ETH/yr)", ascending=False)
 
     # Display as table
     display_prod = prod_df.copy()
@@ -283,21 +293,20 @@ def render_dat_table() -> None:
     display_prod["Staked %"] = display_prod["Staked %"].apply(lambda x: f"{x*100:.0f}%")
     display_prod["Yield (ETH/yr)"] = display_prod["Yield (ETH/yr)"].apply(lambda x: f"{x:,.0f}")
     display_prod["Burn (ETH/yr)"] = display_prod["Burn (ETH/yr)"].apply(lambda x: f"{x:,.0f}")
-    display_prod["Quarterly Burn"] = display_prod["Quarterly Burn"].apply(lambda x: f"${x/1e6:.1f}M")
-    display_prod["Net (ETH/yr)"] = display_prod["Net (ETH/yr)"].apply(
+    display_prod["Premium (ETH/yr)"] = display_prod["Premium (ETH/yr)"].apply(
+        lambda x: f"+{x:,.0f}" if x > 0 else "-"
+    )
+    display_prod["Total (ETH/yr)"] = display_prod["Total (ETH/yr)"].apply(
         lambda x: f"+{x:,.0f}" if x >= 0 else f"{x:,.0f}"
     )
     display_prod["Net Rate"] = display_prod["Net Rate"].apply(
-        lambda x: f"+{x*100:.2f}%" if x >= 0 else f"{x*100:.2f}%"
+        lambda x: f"+{x*100:.1f}%" if x >= 0 else f"{x*100:.1f}%"
     )
     display_prod["Yield Multiple"] = display_prod["Yield Multiple"].apply(
-        lambda x: f"{x:.2f}x" if x >= 0 else f"{x:.2f}x"
+        lambda x: f"{x:.1f}x" if x >= 0 else f"{x:.1f}x"
     )
     display_prod["vs ETF"] = display_prod["vs ETF"].apply(
-        lambda x: f"{x:.2f}x" if x >= 0 else f"{x:.2f}x"
-    )
-    display_prod["ETH from Premium"] = display_prod["ETH from Premium"].apply(
-        lambda x: f"+{x:,.0f}" if x > 0 else "-"
+        lambda x: f"{x:.1f}x" if x >= 0 else f"{x:.1f}x"
     )
     display_prod["Status"] = display_prod["Accretive"].apply(
         lambda x: "Accretive" if x else "Dilutive"
@@ -305,8 +314,8 @@ def render_dat_table() -> None:
 
     st.dataframe(
         display_prod[["Ticker", "ETH Holdings", "Yield (ETH/yr)", "Burn (ETH/yr)",
-                      "Net (ETH/yr)", "Net Rate", "Yield Multiple", "vs ETF",
-                      "ETH from Premium", "Status"]],
+                      "Premium (ETH/yr)", "Total (ETH/yr)", "Net Rate", "Yield Multiple",
+                      "Status"]],
         use_container_width=True,
         hide_index=True,
     )
@@ -316,29 +325,30 @@ def render_dat_table() -> None:
 
     total_yield = prod_df["Yield (ETH/yr)"].sum()
     total_burn = prod_df["Burn (ETH/yr)"].sum()
-    total_net = prod_df["Net (ETH/yr)"].sum()
-    total_premium_eth = prod_df["ETH from Premium"].sum()
+    total_premium = prod_df["Premium (ETH/yr)"].sum()
+    total_productivity = prod_df["Total (ETH/yr)"].sum()
     accretive_count = prod_df["Accretive"].sum()
 
     with col1:
-        st.metric("Total Yield", f"{total_yield:,.0f} ETH/yr")
+        st.metric("Staking Yield", f"{total_yield:,.0f} ETH/yr")
 
     with col2:
-        st.metric("Total Burn", f"{total_burn:,.0f} ETH/yr")
+        st.metric("Operating Burn", f"-{total_burn:,.0f} ETH/yr")
 
     with col3:
-        net_label = f"+{total_net:,.0f}" if total_net >= 0 else f"{total_net:,.0f}"
-        st.metric("Net Productivity", f"{net_label} ETH/yr",
-                  delta=f"{accretive_count}/{len(prod_df)} accretive")
+        st.metric("Premium Capture", f"+{total_premium:,.0f} ETH/yr",
+                  delta="annualized")
 
     with col4:
-        st.metric("ETH from Premiums", f"+{total_premium_eth:,.0f} ETH",
-                  delta="YTD from issuance")
+        total_label = f"+{total_productivity:,.0f}" if total_productivity >= 0 else f"{total_productivity:,.0f}"
+        st.metric("Total Productivity", f"{total_label} ETH/yr",
+                  delta=f"{int(accretive_count)}/{len(prod_df)} accretive")
 
     st.caption("""
+    **Total (ETH/yr)** = Yield - Burn + Annualized Premium Capture
+    **Net Rate** = Total / Holdings (as annual %). Includes premium capture.
     **Yield Multiple** = Net Rate / Network Staking APY (>1x = outperforming pure staking)
-    **vs ETF** = Net Rate / ETF Staking Yield (>1x = outperforming staking ETFs)
-    **ETH from Premium** = ETH acquired by issuing shares above NAV (accretive dilution)
+    **Premium (ETH/yr)** = ETH from Premium / Years Active (annualized contribution)
     """)
 
 

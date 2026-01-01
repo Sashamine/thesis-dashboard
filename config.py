@@ -54,12 +54,14 @@ ETF_STAKING_YIELD = 0.032  # 3.2% - Grayscale ETH Mini Trust net yield after 0.1
 #   ETH from Premium = Capital Raised × (Avg Premium / (1 + Avg Premium)) / ETH Price
 #   Assumes: ATM 20%, PIPE 25%, Converts 10%, small caps 5-10%
 #   Testable: If ETH/share grows faster than staking yield, premium capture is working
+# dat_start_date: When company pivoted to DAT strategy (for annualizing premium capture)
 DAT_COMPANIES = {
     # Tier 1: Major Players (>100k ETH)
     "BMNR": {
         "name": "Bitmine Immersion",
         "ticker": "BMNR",
         "tier": 1,
+        "dat_start_date": "2025-07-01",  # Pivoted to DAT strategy July 2025
         "eth_holdings": 4_066_000,  # Dec 21, 2025 per press release
         "staking_pct": 0.85,  # 85% staked via MAVAN validators
         "staking_method": "MAVAN validators",
@@ -81,6 +83,7 @@ DAT_COMPANIES = {
         "name": "SharpLink Gaming",
         "ticker": "SBET",
         "tier": 1,
+        "dat_start_date": "2025-05-01",  # First major ETH acquisition May 2025
         "eth_holdings": 860_000,  # Oct 2025: 859,853 ETH per press release
         "staking_pct": 0.95,  # 95% staked via Linea/Lido
         "staking_method": "Linea/Lido",
@@ -102,6 +105,7 @@ DAT_COMPANIES = {
         "name": "The Ether Machine",
         "ticker": "ETHM",
         "tier": 1,
+        "dat_start_date": "2025-10-01",  # SPAC merger announced Oct 2025
         "eth_holdings": 495_362,  # Per CoinGecko/company data
         "staking_pct": 1.0,  # 100% staked - "fully staked treasury"
         "staking_method": "Native staking",
@@ -121,6 +125,7 @@ DAT_COMPANIES = {
         "name": "Bit Digital",
         "ticker": "BTBT",
         "tier": 1,
+        "dat_start_date": "2025-01-01",  # Pivoted from BTC mining to ETH staking Jan 2025
         "eth_holdings": 154_000,  # Oct 2025: 153,547 ETH per monthly report
         "staking_pct": 0.86,  # 86.3% staked per Oct report
         "staking_method": "Native staking",
@@ -143,6 +148,7 @@ DAT_COMPANIES = {
         "name": "ETHZilla",
         "ticker": "ETHZ",
         "tier": 2,
+        "dat_start_date": "2024-07-01",  # Early DAT, now pivoting away
         "eth_holdings": 69_802,  # Dec 2025 - sold 24,291 ETH ($74.5M) to pay down debt
         "staking_pct": 0.80,  # Estimated 80% staked
         "staking_method": "Native staking",
@@ -162,6 +168,7 @@ DAT_COMPANIES = {
         "name": "BTCS Inc.",
         "ticker": "BTCS",
         "tier": 2,
+        "dat_start_date": "2024-01-01",  # One of earliest DATs
         "eth_holdings": 70_000,
         "staking_pct": 0.75,  # 75% staked via Builder+
         "staking_method": "Builder+ validators",
@@ -181,6 +188,7 @@ DAT_COMPANIES = {
         "name": "GameSquare",
         "ticker": "GAME",
         "tier": 2,
+        "dat_start_date": "2024-10-01",  # Started ETH strategy Oct 2024
         "eth_holdings": 10_000,
         "staking_pct": 0.50,  # Estimated 50% - newer to ETH
         "staking_method": "Lido/stETH",
@@ -200,6 +208,7 @@ DAT_COMPANIES = {
         "name": "Fundamental Global",
         "ticker": "FGNX",
         "tier": 2,
+        "dat_start_date": "2024-09-01",  # Started ETH strategy Sep 2024
         "eth_holdings": 6_000,
         "staking_pct": 0.60,  # Estimated 60%
         "staking_method": "Lido/stETH",
