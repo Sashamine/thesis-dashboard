@@ -6,6 +6,8 @@ A personal investment thesis tracking dashboard for monitoring
 the health of interconnected investment theses over a 10-15 year horizon.
 
 Run with: streamlit run app.py
+
+Version: 1.0.1
 """
 import streamlit as st
 import sys
