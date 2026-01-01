@@ -1,0 +1,24 @@
+name: Force Streamlit Redeploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  force-redeploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Update deploy timestamp
+        run: |
+          echo "Last deploy: $(date -u)" > .streamlit/deploy_timestamp.txt
+
+      - name: Commit and push
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add .streamlit/deploy_timestamp.txt
+          git diff --staged --quiet || git commit -m "Auto-deploy: $(date -u +%Y-%m-%d_%H:%M:%S)"
+          git push
