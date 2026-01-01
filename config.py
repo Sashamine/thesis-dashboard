@@ -464,15 +464,17 @@ BTC_DAT_COMPANIES = {
         "btc_acquired_2025": 257_000,  # Added ~257K BTC in 2025 (from ~415K to 672K)
         "staking_pct": 0,
         "staking_apy": 0,
-        "quarterly_burn_usd": 15_000_000,  # Software biz + treasury ops
-        "burn_source": "Q3 2025 10-Q",
+        # Burn = Software ops + Preferred dividends (STRK 8% + STRF 10%)
+        # Software: ~$60M/yr, STRK: ~$40M/yr (8% on $500M), STRF: ~$70M/yr (10% on $700M)
+        "quarterly_burn_usd": 42_500_000,  # ~$170M/yr total
+        "burn_source": "Software ops + STRK/STRF preferred dividends",
         # Premium issuance tracking (for reference)
         "capital_raised_2025": 22_000_000_000,  # ~$22B raised in 2025 via ATM/converts
         "avg_issuance_premium": 0.50,  # Trades at ~2x NAV
         "btc_from_premium": 73_000,  # Estimate: $22B × (0.50/1.50) / $100K
         "leader": "Michael Saylor (Executive Chairman)",
         "strategy": "21/21 Plan: $21B equity + $21B debt for BTC. Rebranded to Strategy Feb 2025.",
-        "notes": "672K BTC @ $75K avg. Trades at ~2x NAV. Largest corporate BTC holder.",
+        "notes": "672K BTC @ $75K avg. Trades at ~2x NAV. STRK (8%) + STRF (10%) preferreds.",
     },
     "MARA": {
         "name": "Marathon Digital",
