@@ -42,8 +42,11 @@ PERSONAL_MILESTONES = {
     "family_planning": "2027-06-01",  # Q2-Q3 2027
 }
 
-# Staking ETF benchmark (typical ETH staking ETF yields ~3.0-3.2% after fees)
-ETF_STAKING_YIELD = 0.032  # 3.2% - typical staking ETF yield after fees
+# Staking ETF benchmark
+# ETHE (2.5% fee): Net yield ~0% or negative (fees exceed staking rewards)
+# ETH Mini Trust (0.15% fee): Net yield ~3.2% (best case for retail)
+# Using Mini Trust as benchmark - if DATs can't beat this, not worth the complexity
+ETF_STAKING_YIELD = 0.032  # 3.2% - Grayscale ETH Mini Trust net yield after 0.15% fee
 
 # DAT Company Definitions
 # Burn rates from latest 10-Q/10-K filings (quarterly opex in USD)
@@ -75,15 +78,15 @@ DAT_COMPANIES = {
         "eth_holdings": 838_000,
         "staking_pct": 0.95,  # 95% staked via Linea/Lido
         "staking_method": "Linea/Lido",
-        "quarterly_burn_usd": 3_200_000,  # ~$3.2M/quarter (gaming ops + crypto)
-        "burn_source": "Q3 2025 10-Q",
+        "quarterly_burn_usd": 2_850_000,  # ~$2.85M/quarter (TTM opex ~$11.4M)
+        "burn_source": "Q3 2025 10-Q - verify, user reports may be higher",
         "shares_issued_ytd": 15_000_000,
         "avg_issuance_premium": 0.20,  # 20% premium
         "eth_from_premium": 35_000,
         "leader": "Joe Lubin (Ethereum co-founder)",
         "strategy": "Staking, Linea partnership, tokenized equity via Superstate",
         "shares_outstanding": None,
-        "notes": "Core DAT position, #2 ETH treasury company",
+        "notes": "Core DAT position, #2 ETH treasury. Q3 2025: $104M operating income from ETH gains.",
     },
     "ETHM": {
         "name": "The Ether Machine",
@@ -124,7 +127,7 @@ DAT_COMPANIES = {
         "name": "ETHZilla",
         "ticker": "ETHZ",
         "tier": 2,
-        "eth_holdings": 94_000,
+        "eth_holdings": 69_802,  # Dec 2025 - sold 24,291 ETH ($74.5M) to pay down debt
         "staking_pct": 0.80,  # Estimated 80% staked
         "staking_method": "Native staking",
         "quarterly_burn_usd": 1_200_000,  # ~$1.2M/quarter
@@ -133,9 +136,9 @@ DAT_COMPANIES = {
         "avg_issuance_premium": 0.12,
         "eth_from_premium": 3_500,
         "leader": "Peter Thiel backed",
-        "strategy": "Share buybacks",
+        "strategy": "Pivoting to RWA tokenization, sold ETH for debt paydown & buybacks",
         "shares_outstanding": None,
-        "notes": "",
+        "notes": "Sold $40M ETH (Oct) + $74.5M ETH (Dec). Stock down 96% from Aug highs. Discontinued mNAV dashboard.",
     },
     "BTCS": {
         "name": "BTCS Inc.",
