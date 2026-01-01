@@ -14,14 +14,13 @@ HEADERS = {
 }
 
 # CIK numbers for DAT companies (10-digit padded)
-# These need to be looked up from SEC EDGAR
 DAT_COMPANY_CIKS = {
-    "BMNR": None,  # Bitmine Immersion - needs lookup
+    "BMNR": "0001829311",  # Bitmine Immersion Technologies
     "SBET": "0001784851",  # SharpLink Gaming
-    "ETHM": None,  # The Ether Machine - needs lookup
+    "ETHM": "0002080334",  # The Ether Machine
     "BTBT": "0001799290",  # Bit Digital
     "BTCS": "0001436229",  # BTCS Inc.
-    "ETHZ": None,  # ETHZilla - needs lookup
+    "ETHZ": "0001690080",  # ETHZilla Corporation (fka 180 Life Sciences)
     "GAME": "0001845419",  # GameSquare Holdings
     "FGNX": "0001527352",  # Fundamental Global
 }
