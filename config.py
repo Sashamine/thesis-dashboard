@@ -467,20 +467,20 @@ BTC_DAT_COMPANIES = {
         "strategy": "HODL + AI/HPC diversification. 7.5 EH/s.",
         "notes": "Merged with USBTC. Canadian origin. Expanding to AI data centers.",
     },
-    "SMLR": {
-        "name": "Semler Scientific",
-        "ticker": "SMLR",
-        "tier": 2,
-        "holdings": 3_192,  # Dec 2025
+    "ASST": {
+        "name": "Strive Asset Management",
+        "ticker": "ASST",
+        "tier": 1,
+        "holdings": 10_900,  # Post-merger with Semler (5,816 + ~3,200 SMLR + additional)
         "asset": "BTC",
-        "cost_basis_avg": 87_000,
+        "cost_basis_avg": 100_000,  # Blended - Strive bought at $116K, Semler at $87K
         "staking_pct": 0,
         "staking_apy": 0,
-        "quarterly_burn_usd": 8_000_000,  # Medical device biz + treasury
-        "burn_source": "Q3 2025 10-Q",
-        "leader": "Eric Semler (Chairman)",
-        "strategy": "Medical device company pivoting to BTC treasury.",
-        "notes": "Started BTC treasury May 2024. ~$278M invested. ATM program active.",
+        "quarterly_burn_usd": 12_000_000,  # Asset mgmt + medical device ops
+        "burn_source": "Q3 2025 10-Q estimate",
+        "leader": "Vivek Ramaswamy (Co-Founder)",
+        "strategy": "First publicly traded asset mgmt BTC treasury. 'Preferred equity only' model.",
+        "notes": "Acquired Semler Scientific Sep 2025 ($1.4B). Bought 5,816 BTC at $116K. $2B AUM. Eric Semler joining board.",
     },
     "BITF": {
         "name": "Bitfarms",
