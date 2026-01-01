@@ -5,14 +5,15 @@ Displays SOL, HYPE, and BNB treasury companies (for tracking/news only)
 import streamlit as st
 import pandas as pd
 from typing import Dict, Any
-from config import SOL_DAT_COMPANIES, HYPE_DAT_COMPANIES, BNB_DAT_COMPANIES
+from config import SOL_DAT_COMPANIES, HYPE_DAT_COMPANIES, BNB_DAT_COMPANIES, BTC_DAT_COMPANIES
 from data import fetch_stock_data
 
 
 def get_asset_price(asset: str) -> float:
-    """Fetch current price for SOL, HYPE, or BNB"""
+    """Fetch current price for BTC, SOL, HYPE, or BNB"""
     # Using CoinGecko IDs
     asset_ids = {
+        "BTC": "bitcoin",
         "SOL": "solana",
         "HYPE": "hyperliquid",
         "BNB": "binancecoin",
@@ -33,7 +34,7 @@ def get_asset_price(asset: str) -> float:
         pass
 
     # Fallback prices
-    fallback = {"SOL": 125.0, "HYPE": 25.0, "BNB": 700.0}
+    fallback = {"BTC": 95000.0, "SOL": 125.0, "HYPE": 25.0, "BNB": 700.0}
     return fallback.get(asset, 0)
 
 
@@ -290,30 +291,38 @@ def render_productivity_section(asset: str, companies: Dict[str, Any], asset_pri
 def render_other_dats_page() -> None:
     """Render the Other DATs universe page"""
     st.title("Other DAT Universe")
-    st.caption("SOL, HYPE, and BNB treasury companies (for tracking/news - not part of core ETH thesis)")
+    st.caption("BTC, SOL, HYPE, and BNB treasury companies (for tracking/news - not part of core ETH thesis)")
 
     # Fetch prices
     with st.spinner("Loading prices..."):
+        btc_price = get_asset_price("BTC")
         sol_price = get_asset_price("SOL")
         hype_price = get_asset_price("HYPE")
         bnb_price = get_asset_price("BNB")
 
     # Create tabs for each asset
-    tab1, tab2, tab3 = st.tabs(["Solana (SOL)", "Hyperliquid (HYPE)", "BNB Chain (BNB)"])
+    tab1, tab2, tab3, tab4 = st.tabs(["Bitcoin (BTC)", "Solana (SOL)", "Hyperliquid (HYPE)", "BNB Chain (BNB)"])
 
     with tab1:
+        st.subheader("Bitcoin Treasury Companies")
+        st.caption("The OG DAT strategy - started by MicroStrategy in Aug 2020")
+        render_asset_section("BTC", BTC_DAT_COMPANIES, btc_price)
+        st.markdown("---")
+        render_productivity_section("BTC", BTC_DAT_COMPANIES, btc_price)
+
+    with tab2:
         st.subheader("Solana Treasury Companies")
         render_asset_section("SOL", SOL_DAT_COMPANIES, sol_price)
         st.markdown("---")
         render_productivity_section("SOL", SOL_DAT_COMPANIES, sol_price)
 
-    with tab2:
+    with tab3:
         st.subheader("Hyperliquid Treasury Companies")
         render_asset_section("HYPE", HYPE_DAT_COMPANIES, hype_price)
         st.markdown("---")
         render_productivity_section("HYPE", HYPE_DAT_COMPANIES, hype_price)
 
-    with tab3:
+    with tab4:
         st.subheader("BNB Treasury Companies")
         render_asset_section("BNB", BNB_DAT_COMPANIES, bnb_price)
         st.markdown("---")
@@ -323,21 +332,27 @@ def render_other_dats_page() -> None:
     st.markdown("---")
     st.subheader("Cross-Chain DAT Summary")
 
-    col1, col2, col3 = st.columns(3)
+    col1, col2, col3, col4 = st.columns(4)
 
     with col1:
+        btc_total = sum(c["holdings"] for c in BTC_DAT_COMPANIES.values())
+        btc_value = btc_total * btc_price
+        st.metric("BTC Holdings", f"{btc_total:,.0f}", format_large_number(btc_value))
+        st.caption(f"{len(BTC_DAT_COMPANIES)} companies")
+
+    with col2:
         sol_total = sum(c["holdings"] for c in SOL_DAT_COMPANIES.values())
         sol_value = sol_total * sol_price
         st.metric("SOL Holdings", f"{sol_total:,.0f}", format_large_number(sol_value))
         st.caption(f"{len(SOL_DAT_COMPANIES)} companies")
 
-    with col2:
+    with col3:
         hype_total = sum(c["holdings"] for c in HYPE_DAT_COMPANIES.values())
         hype_value = hype_total * hype_price
         st.metric("HYPE Holdings", f"{hype_total:,.0f}", format_large_number(hype_value))
         st.caption(f"{len(HYPE_DAT_COMPANIES)} companies")
 
-    with col3:
+    with col4:
         bnb_total = sum(c["holdings"] for c in BNB_DAT_COMPANIES.values())
         bnb_value = bnb_total * bnb_price
         st.metric("BNB Holdings", f"{bnb_total:,.0f}", format_large_number(bnb_value))
@@ -347,8 +362,14 @@ def render_other_dats_page() -> None:
     st.markdown("---")
     st.subheader("Key Observations")
     st.markdown("""
+    **Bitcoin DATs (The OG):**
+    - MicroStrategy dominates with 446K BTC (~$42B) - trades at 2x NAV
+    - Miners (MARA, RIOT, CLSK, HUT) are hybrid mining + treasury
+    - No native staking yield - pure price appreciation play
+    - Most mature DAT ecosystem, started Aug 2020
+
     **Solana DATs:**
-    - Largest and most active category with 5+ companies
+    - Fastest growing category with 5+ companies
     - Forward Industries (FWDI) dominates with ~7M SOL ($1.6B+ raised)
     - Higher staking yields (7-11%) than ETH staking
     - Many backed by top-tier crypto VCs (Galaxy, Pantera, Multicoin)

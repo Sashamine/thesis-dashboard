@@ -389,6 +389,161 @@ BNB_DAT_COMPANIES = {
     },
 }
 
+# Bitcoin DAT Companies (the OG treasury strategy)
+# BTC has no native staking - yield comes from lending, covered calls, or custody rewards
+BTC_DAT_COMPANIES = {
+    "MSTR": {
+        "name": "MicroStrategy",
+        "ticker": "MSTR",
+        "tier": 1,
+        "holdings": 446_400,  # Dec 2025 - largest corporate BTC holder
+        "asset": "BTC",
+        "cost_basis_avg": 62_500,  # ~$27.9B total cost
+        "staking_pct": 0,  # BTC has no native staking
+        "staking_apy": 0,
+        "quarterly_burn_usd": 15_000_000,  # Software biz + treasury ops
+        "burn_source": "Q3 2025 10-Q",
+        "leader": "Michael Saylor (Executive Chairman)",
+        "strategy": "OG Bitcoin treasury. 21/21 Plan: $21B equity + $21B debt for BTC.",
+        "notes": "Started Aug 2020. $46B market cap. Trades at ~2x NAV. S&P 500 pending.",
+    },
+    "MARA": {
+        "name": "Marathon Digital",
+        "ticker": "MARA",
+        "tier": 1,
+        "holdings": 44_394,  # Dec 2025
+        "asset": "BTC",
+        "cost_basis_avg": 43_000,
+        "staking_pct": 0,
+        "staking_apy": 0,
+        "quarterly_burn_usd": 85_000_000,  # Mining ops (power, hosting, depreciation)
+        "burn_source": "Q3 2025 10-Q",
+        "leader": "Fred Thiel (CEO)",
+        "strategy": "HODL miner - keeps all mined BTC. 50 EH/s hashrate.",
+        "notes": "Largest US public miner. 'HODL' strategy since 2024. Zero-coupon converts.",
+    },
+    "RIOT": {
+        "name": "Riot Platforms",
+        "ticker": "RIOT",
+        "tier": 1,
+        "holdings": 17_722,  # Dec 2025
+        "asset": "BTC",
+        "cost_basis_avg": 39_000,
+        "staking_pct": 0,
+        "staking_apy": 0,
+        "quarterly_burn_usd": 120_000_000,  # Mining + Corsicana facility ramp
+        "burn_source": "Q3 2025 10-Q",
+        "leader": "Jason Les (CEO)",
+        "strategy": "1 GW Corsicana facility. Mining + data center pivot.",
+        "notes": "Sold some BTC in 2025. Activist pressure from Starboard Value.",
+    },
+    "CLSK": {
+        "name": "CleanSpark",
+        "ticker": "CLSK",
+        "tier": 1,
+        "holdings": 10_097,  # Dec 2025
+        "asset": "BTC",
+        "cost_basis_avg": 45_000,
+        "staking_pct": 0,
+        "staking_apy": 0,
+        "quarterly_burn_usd": 65_000_000,  # Mining ops
+        "burn_source": "Q4 2025 10-Q",
+        "leader": "Zach Bradford (CEO)",
+        "strategy": "Efficient US miner. 37 EH/s target.",
+        "notes": "Acquired GRIID. Aggressive expansion in Georgia/Mississippi.",
+    },
+    "HUT": {
+        "name": "Hut 8",
+        "ticker": "HUT",
+        "tier": 1,
+        "holdings": 10_096,  # Dec 2025
+        "asset": "BTC",
+        "cost_basis_avg": 24_000,  # Lowest cost basis among majors
+        "staking_pct": 0,
+        "staking_apy": 0,
+        "quarterly_burn_usd": 45_000_000,  # Mining + HPC/AI pivot
+        "burn_source": "Q3 2025 10-Q",
+        "leader": "Asher Genoot (CEO)",
+        "strategy": "HODL + AI/HPC diversification. 7.5 EH/s.",
+        "notes": "Merged with USBTC. Canadian origin. Expanding to AI data centers.",
+    },
+    "SMLR": {
+        "name": "Semler Scientific",
+        "ticker": "SMLR",
+        "tier": 2,
+        "holdings": 3_192,  # Dec 2025
+        "asset": "BTC",
+        "cost_basis_avg": 87_000,
+        "staking_pct": 0,
+        "staking_apy": 0,
+        "quarterly_burn_usd": 8_000_000,  # Medical device biz + treasury
+        "burn_source": "Q3 2025 10-Q",
+        "leader": "Eric Semler (Chairman)",
+        "strategy": "Medical device company pivoting to BTC treasury.",
+        "notes": "Started BTC treasury May 2024. ~$278M invested. ATM program active.",
+    },
+    "BITF": {
+        "name": "Bitfarms",
+        "ticker": "BITF",
+        "tier": 2,
+        "holdings": 1_188,  # Dec 2025 (reduced - sells monthly)
+        "asset": "BTC",
+        "cost_basis_avg": 55_000,
+        "staking_pct": 0,
+        "staking_apy": 0,
+        "quarterly_burn_usd": 50_000_000,  # Mining ops
+        "burn_source": "Q3 2025 10-Q",
+        "leader": "Ben Gagnon (CEO)",
+        "strategy": "Monthly BTC sales for operations. 12 EH/s.",
+        "notes": "Sells BTC monthly (not HODL). Argentina/Paraguay operations.",
+    },
+    "WULF": {
+        "name": "TeraWulf",
+        "ticker": "WULF",
+        "tier": 2,
+        "holdings": 699,  # Dec 2025 (sells most production)
+        "asset": "BTC",
+        "cost_basis_avg": 60_000,
+        "staking_pct": 0,
+        "staking_apy": 0,
+        "quarterly_burn_usd": 35_000_000,  # Mining ops
+        "burn_source": "Q3 2025 10-Q",
+        "leader": "Paul Prager (CEO)",
+        "strategy": "Zero-carbon miner. Lake Mariner facility (NY).",
+        "notes": "Nuclear-powered mining. Pivoting to AI/HPC. Sells most BTC mined.",
+    },
+    "KULR": {
+        "name": "KULR Technology",
+        "ticker": "KULR",
+        "tier": 2,
+        "holdings": 510,  # Jan 2026
+        "asset": "BTC",
+        "cost_basis_avg": 97_000,
+        "staking_pct": 0,
+        "staking_apy": 0,
+        "quarterly_burn_usd": 4_000_000,  # Battery tech + treasury ops
+        "burn_source": "Q3 2025 10-Q",
+        "leader": "Michael Mo (CEO)",
+        "strategy": "Battery/thermal tech company with BTC treasury.",
+        "notes": "Started Dec 2024. NASA supplier. Small cap, high volatility.",
+    },
+    "CIFR": {
+        "name": "Cipher Mining",
+        "ticker": "CIFR",
+        "tier": 2,
+        "holdings": 1_034,  # Dec 2025
+        "asset": "BTC",
+        "cost_basis_avg": 50_000,
+        "staking_pct": 0,
+        "staking_apy": 0,
+        "quarterly_burn_usd": 40_000_000,  # Mining ops
+        "burn_source": "Q3 2025 10-Q",
+        "leader": "Tyler Page (CEO)",
+        "strategy": "Texas-based miner. HPC pivot.",
+        "notes": "8.7 EH/s. Sells some BTC for ops. Data center JV with partners.",
+    },
+}
+
 # Phase Definitions
 PHASES = {
     "accumulation": {
