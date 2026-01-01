@@ -10,8 +10,6 @@ from data import (
     fetch_eth_price,
     fetch_stock_data,
     fetch_eth_staking_stats,
-    fetch_eth_burn_stats,
-    fetch_eth_supply_stats,
     calculate_nav,
     calculate_nav_per_share,
     calculate_nav_discount,
@@ -205,46 +203,70 @@ def render_dat_table() -> None:
         for _, row in tier2.iterrows():
             st.caption(f"• {row['Ticker']}: {format_eth_amount(row['ETH Holdings'])}")
 
-    # Staking Yield & Burn Rate Section
+    # Company Productivity Section
     st.markdown("---")
-    st.subheader("Staking Yield & Network Burn")
+    st.subheader("Company Yield vs Pure Staking")
+    st.caption(f"Benchmark: {staking_apy*100:.2f}% APY if you staked ETH directly")
 
-    # Fetch burn stats
-    burn_stats = fetch_eth_burn_stats()
-    supply_stats = fetch_eth_supply_stats()
+    # Calculate productivity metrics for each company
+    productivity_data = []
+    for _, row in df.iterrows():
+        eth_holdings = row["ETH Holdings"]
+        staked_pct = row["Staked %"]
+        staked_eth = row["Staked ETH"]
+        annual_yield_eth = row["Annual Yield ETH"]
 
-    col1, col2, col3 = st.columns(3)
+        # What you'd earn if you just staked 100% of the ETH yourself
+        benchmark_yield = eth_holdings * staking_apy
 
-    with col1:
-        st.markdown("**Network Stats**")
-        st.metric("ETH Staking APY", f"{staking_apy*100:.2f}%")
-        total_staked = supply_stats.get("staked_eth", 34_000_000)
-        staking_ratio = supply_stats.get("staking_ratio", 0.282)
-        st.caption(f"Network staked: {total_staked/1e6:.1f}M ETH ({staking_ratio*100:.1f}%)")
+        # Effective yield rate for this company
+        effective_yield_rate = (annual_yield_eth / eth_holdings) if eth_holdings > 0 else 0
 
-        daily_burn = burn_stats.get("daily_burn_rate", 2_000)
-        st.metric("Daily Burn Rate", f"~{daily_burn:,.0f} ETH")
-        total_burned = burn_stats.get("total_burned_eth", 4_500_000)
-        st.caption(f"Total burned since EIP-1559: {total_burned/1e6:.2f}M ETH")
+        # Productivity vs benchmark (positive = better than staking yourself)
+        yield_vs_benchmark = annual_yield_eth - benchmark_yield
+        productivity_ratio = effective_yield_rate / staking_apy if staking_apy > 0 else 0
 
-    with col2:
-        st.markdown("**DAT Universe Yield**")
-        total_staked_dat = df["Staked ETH"].sum()
-        total_yield_eth = df["Annual Yield ETH"].sum()
-        total_yield_usd = df["Annual Yield USD"].sum()
+        productivity_data.append({
+            "Ticker": row["Ticker"],
+            "Company": row["Company"],
+            "ETH Holdings": eth_holdings,
+            "Staked %": staked_pct,
+            "Staking Method": row["Staking Method"],
+            "Annual Yield (ETH)": annual_yield_eth,
+            "Effective APY": effective_yield_rate,
+            "Benchmark Yield": benchmark_yield,
+            "vs Benchmark": yield_vs_benchmark,
+            "Productivity": productivity_ratio,
+        })
 
-        st.metric("Total Staked ETH", format_eth_amount(total_staked_dat))
-        st.metric("Annual Yield", f"{format_eth_amount(total_yield_eth)} ({format_large_number(total_yield_usd)})")
+    prod_df = pd.DataFrame(productivity_data)
 
-        avg_staking_pct = df["Staked %"].mean()
-        st.caption(f"Avg staking: {avg_staking_pct*100:.0f}% of holdings")
+    # Display as table
+    display_prod = prod_df.copy()
+    display_prod["ETH Holdings"] = display_prod["ETH Holdings"].apply(lambda x: f"{x:,.0f}")
+    display_prod["Staked %"] = display_prod["Staked %"].apply(lambda x: f"{x*100:.0f}%")
+    display_prod["Annual Yield (ETH)"] = display_prod["Annual Yield (ETH)"].apply(lambda x: f"{x:,.0f}")
+    display_prod["Effective APY"] = display_prod["Effective APY"].apply(lambda x: f"{x*100:.2f}%")
+    display_prod["Benchmark Yield"] = display_prod["Benchmark Yield"].apply(lambda x: f"{x:,.0f}")
+    display_prod["vs Benchmark"] = display_prod["vs Benchmark"].apply(
+        lambda x: f"+{x:,.0f}" if x >= 0 else f"{x:,.0f}"
+    )
+    display_prod["Productivity"] = display_prod["Productivity"].apply(
+        lambda x: f"{x:.0%}" if x >= 1 else f"{x:.0%}"
+    )
 
-    with col3:
-        st.markdown("**By Company**")
-        for _, row in df.sort_values("Annual Yield ETH", ascending=False).iterrows():
-            staked_pct = row["Staked %"] * 100
-            yield_eth = row["Annual Yield ETH"]
-            st.caption(f"**{row['Ticker']}**: {staked_pct:.0f}% staked → {yield_eth:,.0f} ETH/yr")
+    st.dataframe(
+        display_prod[["Ticker", "ETH Holdings", "Staked %", "Staking Method",
+                      "Annual Yield (ETH)", "Effective APY", "vs Benchmark", "Productivity"]],
+        use_container_width=True,
+        hide_index=True,
+    )
+
+    st.caption("""
+    **Effective APY** = Annual yield / ETH holdings (accounts for % actually staked)
+    **vs Benchmark** = Yield difference vs staking 100% yourself
+    **Productivity** = Effective APY / Network APY (100% = same as staking yourself, >100% = outperforming)
+    """)
 
 
 def render_add_dat_form() -> None:
