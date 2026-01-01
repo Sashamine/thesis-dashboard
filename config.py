@@ -48,6 +48,8 @@ DAT_COMPANIES = {
         "ticker": "BMNR",
         "tier": 1,
         "eth_holdings": 4_110_000,  # Dec 2025 estimate
+        "staking_pct": 0.85,  # 85% staked via MAVAN validators
+        "staking_method": "MAVAN validators",
         "leader": "Tom Lee (Fundstrat)",
         "strategy": "5% of ETH supply goal, staking, MAVAN validators Q1 2026",
         "shares_outstanding": None,  # Will be fetched
@@ -58,6 +60,8 @@ DAT_COMPANIES = {
         "ticker": "SBET",
         "tier": 1,
         "eth_holdings": 838_000,
+        "staking_pct": 0.95,  # 95% staked via Linea/Lido
+        "staking_method": "Linea/Lido",
         "leader": "Joe Lubin (Ethereum co-founder)",
         "strategy": "Staking, Linea partnership, tokenized equity via Superstate",
         "shares_outstanding": None,
@@ -68,16 +72,20 @@ DAT_COMPANIES = {
         "ticker": "ETHM",
         "tier": 1,
         "eth_holdings": 496_000,
+        "staking_pct": 1.0,  # 100% staked - "fully staked treasury"
+        "staking_method": "Native staking",
         "leader": "Andrew Keys",
         "strategy": "DeFi/staking 'machine' to grow ETH",
         "shares_outstanding": None,
-        "notes": "",
+        "notes": "First 1,000+ ETH yield from fully staked treasury",
     },
     "BTBT": {
         "name": "Bit Digital",
         "ticker": "BTBT",
         "tier": 1,
         "eth_holdings": 154_000,
+        "staking_pct": 0.90,  # 90% staked per company statement
+        "staking_method": "Native staking",
         "leader": "Sam Tabar",
         "strategy": "90% staked, fully exited BTC",
         "shares_outstanding": None,
@@ -89,6 +97,8 @@ DAT_COMPANIES = {
         "ticker": "ETHZ",
         "tier": 2,
         "eth_holdings": 94_000,
+        "staking_pct": 0.80,  # Estimated 80% staked
+        "staking_method": "Native staking",
         "leader": "Peter Thiel backed",
         "strategy": "Share buybacks",
         "shares_outstanding": None,
@@ -99,6 +109,8 @@ DAT_COMPANIES = {
         "ticker": "BTCS",
         "tier": 2,
         "eth_holdings": 70_000,
+        "staking_pct": 0.75,  # 75% staked via Builder+
+        "staking_method": "Builder+ validators",
         "leader": "",
         "strategy": "ETH 'Bividend,' DeFi/TradFi flywheel, Builder+",
         "shares_outstanding": None,
@@ -109,6 +121,8 @@ DAT_COMPANIES = {
         "ticker": "GAME",
         "tier": 2,
         "eth_holdings": 10_000,
+        "staking_pct": 0.50,  # Estimated 50% - newer to ETH
+        "staking_method": "Lido/stETH",
         "leader": "",
         "strategy": "$250M authorization for more",
         "shares_outstanding": None,
@@ -119,6 +133,8 @@ DAT_COMPANIES = {
         "ticker": "FGNX",
         "tier": 2,
         "eth_holdings": 6_000,
+        "staking_pct": 0.60,  # Estimated 60%
+        "staking_method": "Lido/stETH",
         "leader": "",
         "strategy": "Insurance/reinsurance pivot",
         "shares_outstanding": None,

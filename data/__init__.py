@@ -11,6 +11,8 @@ from .fetchers import (
     fetch_deficit_gdp_ratio,
     fetch_defi_tvl,
     fetch_eth_staking_stats,
+    fetch_eth_burn_stats,
+    fetch_eth_supply_stats,
     fetch_dxy,
     fetch_all_dat_stocks,
     calculate_net_liquidity,

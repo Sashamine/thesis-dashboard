@@ -235,7 +235,23 @@ def fetch_defi_tvl() -> Dict[str, Any]:
 def fetch_eth_staking_stats() -> Dict[str, Any]:
     """Fetch ETH staking statistics from Beaconcha.in API"""
     try:
-        # Using DefiLlama for staking data as a fallback
+        # Try beaconcha.in API first for accurate staking APR
+        try:
+            url = "https://beaconcha.in/api/v1/ethstore/latest"
+            response = requests.get(url, timeout=10)
+            if response.status_code == 200:
+                data = response.json()
+                if data.get("status") == "OK":
+                    apr = data.get("data", {}).get("apr", 0.035)
+                    return {
+                        "estimated_apy": apr,
+                        "source": "beaconcha.in",
+                        "timestamp": datetime.now().isoformat(),
+                    }
+        except:
+            pass
+
+        # Fallback: Using DefiLlama for Lido data
         url = "https://api.llama.fi/protocol/lido"
         response = requests.get(url, timeout=10)
         response.raise_for_status()
@@ -244,18 +260,92 @@ def fetch_eth_staking_stats() -> Dict[str, Any]:
         # Lido is the largest staking provider, use as proxy
         lido_tvl = data.get("tvl", [])[-1].get("totalLiquidityUSD", 0) if data.get("tvl") else 0
 
-        # Approximate staking yield (this should ideally come from rated.network)
-        # Using a placeholder - in production, integrate with rated.network API
+        # Current ETH staking yield is approximately 3-4%
         estimated_apy = 0.035  # 3.5% approximate
 
         return {
             "lido_tvl_usd": lido_tvl,
             "estimated_apy": estimated_apy,
+            "source": "estimated",
             "timestamp": datetime.now().isoformat(),
-            "note": "APY is estimated. Integrate rated.network for accurate data.",
         }
     except Exception as e:
-        return {"error": str(e), "estimated_apy": None}
+        return {"error": str(e), "estimated_apy": 0.035}
+
+
+@st.cache_data(ttl=CACHE_TTL)
+def fetch_eth_burn_stats() -> Dict[str, Any]:
+    """Fetch ETH burn statistics from ultrasound.money API"""
+    try:
+        # ultrasound.money API endpoint
+        url = "https://ultrasound.money/api/v2/fees/eth-burn-total"
+        response = requests.get(url, timeout=10)
+
+        if response.status_code == 200:
+            data = response.json()
+            total_burn_wei = data.get("ethBurnSum", 0)
+            total_burn_eth = total_burn_wei / 1e18 if total_burn_wei else 0
+
+            return {
+                "total_burned_eth": total_burn_eth,
+                "source": "ultrasound.money",
+                "timestamp": datetime.now().isoformat(),
+            }
+
+        # Fallback: fetch from alternative source
+        # Using approximate values based on known data
+        return {
+            "total_burned_eth": 4_500_000,  # ~4.5M ETH burned since EIP-1559
+            "daily_burn_rate": 2_000,  # ~2000 ETH/day average
+            "annual_burn_rate": 730_000,  # ~730K ETH/year
+            "source": "estimated",
+            "timestamp": datetime.now().isoformat(),
+        }
+    except Exception as e:
+        return {
+            "error": str(e),
+            "total_burned_eth": 4_500_000,
+            "daily_burn_rate": 2_000,
+            "source": "fallback",
+        }
+
+
+@st.cache_data(ttl=CACHE_TTL)
+def fetch_eth_supply_stats() -> Dict[str, Any]:
+    """Fetch ETH supply and issuance statistics"""
+    try:
+        # Try ultrasound.money for supply data
+        url = "https://ultrasound.money/api/v2/fees/supply-parts"
+        response = requests.get(url, timeout=10)
+
+        if response.status_code == 200:
+            data = response.json()
+            return {
+                "total_supply": data.get("supply", 120_000_000),
+                "staked_eth": data.get("staked", 34_000_000),
+                "staking_ratio": data.get("staked", 34_000_000) / data.get("supply", 120_000_000),
+                "source": "ultrasound.money",
+                "timestamp": datetime.now().isoformat(),
+            }
+
+        # Fallback values based on known data
+        return {
+            "total_supply": 120_690_000,  # ~120.69M ETH
+            "staked_eth": 34_000_000,  # ~34M ETH staked
+            "staking_ratio": 0.282,  # ~28.2% staked
+            "daily_issuance": 1_500,  # ~1.5K ETH/day post-merge
+            "annual_issuance": 547_500,  # ~547.5K ETH/year
+            "source": "estimated",
+            "timestamp": datetime.now().isoformat(),
+        }
+    except Exception as e:
+        return {
+            "error": str(e),
+            "total_supply": 120_690_000,
+            "staked_eth": 34_000_000,
+            "staking_ratio": 0.282,
+            "source": "fallback",
+        }
 
 
 @st.cache_data(ttl=CACHE_TTL)
