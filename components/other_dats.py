@@ -166,6 +166,127 @@ def render_asset_section(asset: str, companies: Dict[str, Any], asset_price: flo
             st.markdown("---")
 
 
+def render_productivity_section(asset: str, companies: Dict[str, Any], asset_price: float) -> None:
+    """Render Yield vs Burn productivity analysis for a specific asset"""
+    if not companies or asset_price <= 0:
+        return
+
+    st.subheader(f"{asset} Company Productivity: Yield vs Burn")
+
+    productivity_data = []
+
+    for ticker, company in companies.items():
+        holdings = company.get("holdings", 0)
+        staking_pct = company.get("staking_pct", 0)
+        staking_apy = company.get("staking_apy", 0)
+        quarterly_burn_usd = company.get("quarterly_burn_usd", 0)
+
+        # Annual yield from staking
+        staked_holdings = holdings * staking_pct
+        annual_yield_tokens = staked_holdings * staking_apy
+        annual_yield_usd = annual_yield_tokens * asset_price
+
+        # Annual burn
+        annual_burn_usd = quarterly_burn_usd * 4
+        annual_burn_tokens = annual_burn_usd / asset_price if asset_price > 0 else 0
+
+        # Net productivity
+        net_tokens = annual_yield_tokens - annual_burn_tokens
+        net_usd = annual_yield_usd - annual_burn_usd
+
+        # Net rate (as % of holdings)
+        net_rate = (net_tokens / holdings) if holdings > 0 else 0
+
+        # Yield multiple vs pure staking
+        yield_multiple = net_rate / staking_apy if staking_apy > 0 else 0
+
+        # Is accretive?
+        is_accretive = net_tokens > 0
+
+        productivity_data.append({
+            "Ticker": ticker,
+            "Holdings": holdings,
+            "Staked %": staking_pct,
+            "Staking APY": staking_apy,
+            f"Yield ({asset}/yr)": annual_yield_tokens,
+            "Yield (USD/yr)": annual_yield_usd,
+            f"Burn ({asset}/yr)": annual_burn_tokens,
+            "Burn (USD/yr)": annual_burn_usd,
+            f"Net ({asset}/yr)": net_tokens,
+            "Net (USD/yr)": net_usd,
+            "Net Rate": net_rate,
+            "Yield Multiple": yield_multiple,
+            "Accretive": is_accretive,
+            "Burn Source": company.get("burn_source", ""),
+        })
+
+    prod_df = pd.DataFrame(productivity_data)
+
+    # Sort by net productivity
+    prod_df = prod_df.sort_values(f"Net ({asset}/yr)", ascending=False)
+
+    # Format for display
+    display_prod = prod_df.copy()
+    display_prod["Holdings"] = display_prod["Holdings"].apply(lambda x: f"{x:,.0f}")
+    display_prod["Staked %"] = display_prod["Staked %"].apply(lambda x: f"{x*100:.0f}%")
+    display_prod["Staking APY"] = display_prod["Staking APY"].apply(lambda x: f"{x*100:.1f}%")
+    display_prod[f"Yield ({asset}/yr)"] = display_prod[f"Yield ({asset}/yr)"].apply(lambda x: f"{x:,.0f}")
+    display_prod[f"Burn ({asset}/yr)"] = display_prod[f"Burn ({asset}/yr)"].apply(lambda x: f"{x:,.0f}")
+    display_prod[f"Net ({asset}/yr)"] = display_prod[f"Net ({asset}/yr)"].apply(
+        lambda x: f"+{x:,.0f}" if x >= 0 else f"{x:,.0f}"
+    )
+    display_prod["Net Rate"] = display_prod["Net Rate"].apply(
+        lambda x: f"+{x*100:.2f}%" if x >= 0 else f"{x*100:.2f}%"
+    )
+    display_prod["Yield Multiple"] = display_prod["Yield Multiple"].apply(
+        lambda x: f"{x:.2f}x" if x >= 0 else f"{x:.2f}x"
+    )
+    display_prod["Status"] = display_prod["Accretive"].apply(
+        lambda x: "Accretive" if x else "Dilutive"
+    )
+
+    # Display table
+    columns_to_show = [
+        "Ticker", "Holdings", f"Yield ({asset}/yr)", f"Burn ({asset}/yr)",
+        f"Net ({asset}/yr)", "Net Rate", "Yield Multiple", "Status"
+    ]
+
+    st.dataframe(
+        display_prod[columns_to_show],
+        use_container_width=True,
+        hide_index=True,
+    )
+
+    # Summary metrics
+    col1, col2, col3, col4 = st.columns(4)
+
+    total_yield = prod_df[f"Yield ({asset}/yr)"].sum()
+    total_burn = prod_df[f"Burn ({asset}/yr)"].sum()
+    total_net = prod_df[f"Net ({asset}/yr)"].sum()
+    accretive_count = prod_df["Accretive"].sum()
+
+    with col1:
+        st.metric("Total Yield", f"{total_yield:,.0f} {asset}/yr")
+
+    with col2:
+        st.metric("Total Burn", f"{total_burn:,.0f} {asset}/yr")
+
+    with col3:
+        net_label = f"+{total_net:,.0f}" if total_net >= 0 else f"{total_net:,.0f}"
+        st.metric("Net Productivity", f"{net_label} {asset}/yr",
+                  delta=f"{int(accretive_count)}/{len(prod_df)} accretive")
+
+    with col4:
+        total_net_usd = prod_df["Net (USD/yr)"].sum()
+        st.metric("Net (USD)", format_large_number(total_net_usd))
+
+    st.caption(f"""
+    **Yield Multiple** = Net Rate / Staking APY (>1x = outperforming pure staking)
+    **Net Rate** = (Yield - Burn) / Holdings as annual %
+    **Accretive** = Company generates more from staking than it burns on operations
+    """)
+
+
 def render_other_dats_page() -> None:
     """Render the Other DATs universe page"""
     st.title("Other DAT Universe")
@@ -183,14 +304,20 @@ def render_other_dats_page() -> None:
     with tab1:
         st.subheader("Solana Treasury Companies")
         render_asset_section("SOL", SOL_DAT_COMPANIES, sol_price)
+        st.markdown("---")
+        render_productivity_section("SOL", SOL_DAT_COMPANIES, sol_price)
 
     with tab2:
         st.subheader("Hyperliquid Treasury Companies")
         render_asset_section("HYPE", HYPE_DAT_COMPANIES, hype_price)
+        st.markdown("---")
+        render_productivity_section("HYPE", HYPE_DAT_COMPANIES, hype_price)
 
     with tab3:
         st.subheader("BNB Treasury Companies")
         render_asset_section("BNB", BNB_DAT_COMPANIES, bnb_price)
+        st.markdown("---")
+        render_productivity_section("BNB", BNB_DAT_COMPANIES, bnb_price)
 
     # Overall summary
     st.markdown("---")
