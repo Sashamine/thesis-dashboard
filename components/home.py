@@ -3,6 +3,7 @@ Home/Summary Page Component
 Displays precondition health, phase progression, position health, and invalidation watch
 """
 import streamlit as st
+from datetime import datetime
 from typing import Dict, Any
 from config import (
     DAT_COMPANIES,
@@ -25,6 +26,7 @@ from data import (
     format_large_number,
     format_percentage,
 )
+from validation import get_data_health_summary
 
 
 def render_health_indicator(status: str, label: str) -> None:
@@ -215,6 +217,74 @@ def render_invalidation_watch() -> None:
         st.caption(f"{icon} {metric}: {meaning}")
 
 
+def render_data_health() -> None:
+    """Render data health/freshness section"""
+    st.subheader("Data Health")
+
+    # Get health summary
+    try:
+        summary = get_data_health_summary()
+    except Exception as e:
+        st.warning(f"Could not load data health: {e}")
+        return
+
+    overall = summary["overall"]
+
+    # Overall stats
+    col1, col2, col3, col4 = st.columns(4)
+
+    with col1:
+        fresh_pct = (
+            overall["verified_companies"] / overall["total_companies"] * 100
+            if overall["total_companies"] > 0
+            else 0
+        )
+        if fresh_pct >= 80:
+            status_emoji = "🟢"
+        elif fresh_pct >= 50:
+            status_emoji = "🟡"
+        else:
+            status_emoji = "🔴"
+        st.metric("Data Freshness", f"{status_emoji} {fresh_pct:.0f}%")
+
+    with col2:
+        st.metric("Fresh", f"{overall['verified_companies']}/{overall['total_companies']}")
+
+    with col3:
+        st.metric("Stale", str(overall["stale_companies"]))
+
+    with col4:
+        st.metric("Unverified", str(overall["never_verified"]))
+
+    # Stale items warning
+    stale_items = summary.get("stale_items", [])
+    if stale_items:
+        with st.expander(f"Stale Items ({len(stale_items)})", expanded=False):
+            for item in stale_items[:10]:  # Show first 10
+                st.caption(f"- **{item['ticker']}**.{item['field']}: {item['reason']}")
+            if len(stale_items) > 10:
+                st.caption(f"... and {len(stale_items) - 10} more")
+
+    # Manual refresh button
+    col1, col2 = st.columns([3, 1])
+    with col2:
+        if st.button("Run Validation", help="Check all data against authoritative sources"):
+            with st.spinner("Running validation check..."):
+                # Re-run health check and save
+                summary = get_data_health_summary()
+                st.success(f"Checked {overall['total_companies']} companies")
+                st.rerun()
+
+    # Last check timestamp
+    generated_at = summary.get("generated_at")
+    if generated_at:
+        try:
+            dt = datetime.fromisoformat(generated_at)
+            st.caption(f"Last checked: {dt.strftime('%Y-%m-%d %H:%M')}")
+        except:
+            pass
+
+
 def render_home_page() -> None:
     """Render the complete home page"""
     st.title("Thesis Tracking Dashboard")
@@ -250,3 +320,6 @@ def render_home_page() -> None:
     st.markdown("---")
 
     render_invalidation_watch()
+    st.markdown("---")
+
+    render_data_health()

@@ -1,0 +1,728 @@
+{
+  "generated_at": "2026-01-02T00:40:11.904895",
+  "overall": {
+    "total_companies": 23,
+    "verified_companies": 0,
+    "stale_companies": 0,
+    "never_verified": 23
+  },
+  "companies": {
+    "BMNR": {
+      "name": "Bitmine Immersion",
+      "asset_type": "ETH",
+      "fields": {
+        "eth_holdings": {
+          "status": "never_verified",
+          "age_days": null
+        },
+        "staking_pct": {
+          "status": "never_verified",
+          "age_days": null
+        },
+        "quarterly_burn_usd": {
+          "status": "never_verified",
+          "age_days": null
+        }
+      },
+      "overall_status": "never_verified",
+      "last_verified": null
+    },
+    "SBET": {
+      "name": "SharpLink Gaming",
+      "asset_type": "ETH",
+      "fields": {
+        "eth_holdings": {
+          "status": "never_verified",
+          "age_days": null
+        },
+        "staking_pct": {
+          "status": "never_verified",
+          "age_days": null
+        },
+        "quarterly_burn_usd": {
+          "status": "never_verified",
+          "age_days": null
+        }
+      },
+      "overall_status": "never_verified",
+      "last_verified": null
+    },
+    "ETHM": {
+      "name": "The Ether Machine",
+      "asset_type": "ETH",
+      "fields": {
+        "eth_holdings": {
+          "status": "never_verified",
+          "age_days": null
+        },
+        "staking_pct": {
+          "status": "never_verified",
+          "age_days": null
+        },
+        "quarterly_burn_usd": {
+          "status": "never_verified",
+          "age_days": null
+        }
+      },
+      "overall_status": "never_verified",
+      "last_verified": null
+    },
+    "BTBT": {
+      "name": "Bit Digital",
+      "asset_type": "ETH",
+      "fields": {
+        "eth_holdings": {
+          "status": "never_verified",
+          "age_days": null
+        },
+        "staking_pct": {
+          "status": "never_verified",
+          "age_days": null
+        },
+        "quarterly_burn_usd": {
+          "status": "never_verified",
+          "age_days": null
+        }
+      },
+      "overall_status": "never_verified",
+      "last_verified": null
+    },
+    "ETHZ": {
+      "name": "ETHZilla",
+      "asset_type": "ETH",
+      "fields": {
+        "eth_holdings": {
+          "status": "never_verified",
+          "age_days": null
+        },
+        "staking_pct": {
+          "status": "never_verified",
+          "age_days": null
+        },
+        "quarterly_burn_usd": {
+          "status": "never_verified",
+          "age_days": null
+        }
+      },
+      "overall_status": "never_verified",
+      "last_verified": null
+    },
+    "BTCS": {
+      "name": "BTCS Inc.",
+      "asset_type": "ETH",
+      "fields": {
+        "eth_holdings": {
+          "status": "never_verified",
+          "age_days": null
+        },
+        "staking_pct": {
+          "status": "never_verified",
+          "age_days": null
+        },
+        "quarterly_burn_usd": {
+          "status": "never_verified",
+          "age_days": null
+        }
+      },
+      "overall_status": "never_verified",
+      "last_verified": null
+    },
+    "GAME": {
+      "name": "GameSquare",
+      "asset_type": "ETH",
+      "fields": {
+        "eth_holdings": {
+          "status": "never_verified",
+          "age_days": null
+        },
+        "staking_pct": {
+          "status": "never_verified",
+          "age_days": null
+        },
+        "quarterly_burn_usd": {
+          "status": "never_verified",
+          "age_days": null
+        }
+      },
+      "overall_status": "never_verified",
+      "last_verified": null
+    },
+    "FGNX": {
+      "name": "Fundamental Global",
+      "asset_type": "ETH",
+      "fields": {
+        "eth_holdings": {
+          "status": "never_verified",
+          "age_days": null
+        },
+        "staking_pct": {
+          "status": "never_verified",
+          "age_days": null
+        },
+        "quarterly_burn_usd": {
+          "status": "never_verified",
+          "age_days": null
+        }
+      },
+      "overall_status": "never_verified",
+      "last_verified": null
+    },
+    "MSTR": {
+      "name": "Strategy (fka MicroStrategy)",
+      "asset_type": "BTC",
+      "fields": {
+        "holdings": {
+          "status": "never_verified",
+          "age_days": null
+        },
+        "quarterly_burn_usd": {
+          "status": "never_verified",
+          "age_days": null
+        }
+      },
+      "overall_status": "never_verified",
+      "last_verified": null
+    },
+    "MARA": {
+      "name": "Marathon Digital",
+      "asset_type": "BTC",
+      "fields": {
+        "holdings": {
+          "status": "never_verified",
+          "age_days": null
+        },
+        "quarterly_burn_usd": {
+          "status": "never_verified",
+          "age_days": null
+        }
+      },
+      "overall_status": "never_verified",
+      "last_verified": null
+    },
+    "RIOT": {
+      "name": "Riot Platforms",
+      "asset_type": "BTC",
+      "fields": {
+        "holdings": {
+          "status": "never_verified",
+          "age_days": null
+        },
+        "quarterly_burn_usd": {
+          "status": "never_verified",
+          "age_days": null
+        }
+      },
+      "overall_status": "never_verified",
+      "last_verified": null
+    },
+    "CLSK": {
+      "name": "CleanSpark",
+      "asset_type": "BTC",
+      "fields": {
+        "holdings": {
+          "status": "never_verified",
+          "age_days": null
+        },
+        "quarterly_burn_usd": {
+          "status": "never_verified",
+          "age_days": null
+        }
+      },
+      "overall_status": "never_verified",
+      "last_verified": null
+    },
+    "HUT": {
+      "name": "Hut 8",
+      "asset_type": "BTC",
+      "fields": {
+        "holdings": {
+          "status": "never_verified",
+          "age_days": null
+        },
+        "quarterly_burn_usd": {
+          "status": "never_verified",
+          "age_days": null
+        }
+      },
+      "overall_status": "never_verified",
+      "last_verified": null
+    },
+    "ASST": {
+      "name": "Strive Asset Management",
+      "asset_type": "BTC",
+      "fields": {
+        "holdings": {
+          "status": "never_verified",
+          "age_days": null
+        },
+        "quarterly_burn_usd": {
+          "status": "never_verified",
+          "age_days": null
+        }
+      },
+      "overall_status": "never_verified",
+      "last_verified": null
+    },
+    "BITF": {
+      "name": "Bitfarms",
+      "asset_type": "BTC",
+      "fields": {
+        "holdings": {
+          "status": "never_verified",
+          "age_days": null
+        },
+        "quarterly_burn_usd": {
+          "status": "never_verified",
+          "age_days": null
+        }
+      },
+      "overall_status": "never_verified",
+      "last_verified": null
+    },
+    "WULF": {
+      "name": "TeraWulf",
+      "asset_type": "BTC",
+      "fields": {
+        "holdings": {
+          "status": "never_verified",
+          "age_days": null
+        },
+        "quarterly_burn_usd": {
+          "status": "never_verified",
+          "age_days": null
+        }
+      },
+      "overall_status": "never_verified",
+      "last_verified": null
+    },
+    "KULR": {
+      "name": "KULR Technology",
+      "asset_type": "BTC",
+      "fields": {
+        "holdings": {
+          "status": "never_verified",
+          "age_days": null
+        },
+        "quarterly_burn_usd": {
+          "status": "never_verified",
+          "age_days": null
+        }
+      },
+      "overall_status": "never_verified",
+      "last_verified": null
+    },
+    "CIFR": {
+      "name": "Cipher Mining",
+      "asset_type": "BTC",
+      "fields": {
+        "holdings": {
+          "status": "never_verified",
+          "age_days": null
+        },
+        "quarterly_burn_usd": {
+          "status": "never_verified",
+          "age_days": null
+        }
+      },
+      "overall_status": "never_verified",
+      "last_verified": null
+    },
+    "FWDI": {
+      "name": "Forward Industries",
+      "asset_type": "SOL",
+      "fields": {
+        "holdings": {
+          "status": "never_verified",
+          "age_days": null
+        },
+        "staking_pct": {
+          "status": "never_verified",
+          "age_days": null
+        },
+        "quarterly_burn_usd": {
+          "status": "never_verified",
+          "age_days": null
+        }
+      },
+      "overall_status": "never_verified",
+      "last_verified": null
+    },
+    "HSDT": {
+      "name": "Solana Company (fka Helius Medical)",
+      "asset_type": "SOL",
+      "fields": {
+        "holdings": {
+          "status": "never_verified",
+          "age_days": null
+        },
+        "staking_pct": {
+          "status": "never_verified",
+          "age_days": null
+        },
+        "quarterly_burn_usd": {
+          "status": "never_verified",
+          "age_days": null
+        }
+      },
+      "overall_status": "never_verified",
+      "last_verified": null
+    },
+    "DFDV": {
+      "name": "DeFi Development Corp",
+      "asset_type": "SOL",
+      "fields": {
+        "holdings": {
+          "status": "never_verified",
+          "age_days": null
+        },
+        "staking_pct": {
+          "status": "never_verified",
+          "age_days": null
+        },
+        "quarterly_burn_usd": {
+          "status": "never_verified",
+          "age_days": null
+        }
+      },
+      "overall_status": "never_verified",
+      "last_verified": null
+    },
+    "UPXI": {
+      "name": "Upexi",
+      "asset_type": "SOL",
+      "fields": {
+        "holdings": {
+          "status": "never_verified",
+          "age_days": null
+        },
+        "staking_pct": {
+          "status": "never_verified",
+          "age_days": null
+        },
+        "quarterly_burn_usd": {
+          "status": "never_verified",
+          "age_days": null
+        }
+      },
+      "overall_status": "never_verified",
+      "last_verified": null
+    },
+    "HODL": {
+      "name": "Sol Strategies",
+      "asset_type": "SOL",
+      "fields": {
+        "holdings": {
+          "status": "never_verified",
+          "age_days": null
+        },
+        "staking_pct": {
+          "status": "never_verified",
+          "age_days": null
+        },
+        "quarterly_burn_usd": {
+          "status": "never_verified",
+          "age_days": null
+        }
+      },
+      "overall_status": "never_verified",
+      "last_verified": null
+    }
+  },
+  "stale_items": [
+    {
+      "ticker": "BMNR",
+      "field": "eth_holdings",
+      "reason": "Never verified"
+    },
+    {
+      "ticker": "BMNR",
+      "field": "staking_pct",
+      "reason": "Never verified"
+    },
+    {
+      "ticker": "BMNR",
+      "field": "quarterly_burn_usd",
+      "reason": "Never verified"
+    },
+    {
+      "ticker": "SBET",
+      "field": "eth_holdings",
+      "reason": "Never verified"
+    },
+    {
+      "ticker": "SBET",
+      "field": "staking_pct",
+      "reason": "Never verified"
+    },
+    {
+      "ticker": "SBET",
+      "field": "quarterly_burn_usd",
+      "reason": "Never verified"
+    },
+    {
+      "ticker": "ETHM",
+      "field": "eth_holdings",
+      "reason": "Never verified"
+    },
+    {
+      "ticker": "ETHM",
+      "field": "staking_pct",
+      "reason": "Never verified"
+    },
+    {
+      "ticker": "ETHM",
+      "field": "quarterly_burn_usd",
+      "reason": "Never verified"
+    },
+    {
+      "ticker": "BTBT",
+      "field": "eth_holdings",
+      "reason": "Never verified"
+    },
+    {
+      "ticker": "BTBT",
+      "field": "staking_pct",
+      "reason": "Never verified"
+    },
+    {
+      "ticker": "BTBT",
+      "field": "quarterly_burn_usd",
+      "reason": "Never verified"
+    },
+    {
+      "ticker": "ETHZ",
+      "field": "eth_holdings",
+      "reason": "Never verified"
+    },
+    {
+      "ticker": "ETHZ",
+      "field": "staking_pct",
+      "reason": "Never verified"
+    },
+    {
+      "ticker": "ETHZ",
+      "field": "quarterly_burn_usd",
+      "reason": "Never verified"
+    },
+    {
+      "ticker": "BTCS",
+      "field": "eth_holdings",
+      "reason": "Never verified"
+    },
+    {
+      "ticker": "BTCS",
+      "field": "staking_pct",
+      "reason": "Never verified"
+    },
+    {
+      "ticker": "BTCS",
+      "field": "quarterly_burn_usd",
+      "reason": "Never verified"
+    },
+    {
+      "ticker": "GAME",
+      "field": "eth_holdings",
+      "reason": "Never verified"
+    },
+    {
+      "ticker": "GAME",
+      "field": "staking_pct",
+      "reason": "Never verified"
+    },
+    {
+      "ticker": "GAME",
+      "field": "quarterly_burn_usd",
+      "reason": "Never verified"
+    },
+    {
+      "ticker": "FGNX",
+      "field": "eth_holdings",
+      "reason": "Never verified"
+    },
+    {
+      "ticker": "FGNX",
+      "field": "staking_pct",
+      "reason": "Never verified"
+    },
+    {
+      "ticker": "FGNX",
+      "field": "quarterly_burn_usd",
+      "reason": "Never verified"
+    },
+    {
+      "ticker": "MSTR",
+      "field": "holdings",
+      "reason": "Never verified"
+    },
+    {
+      "ticker": "MSTR",
+      "field": "quarterly_burn_usd",
+      "reason": "Never verified"
+    },
+    {
+      "ticker": "MARA",
+      "field": "holdings",
+      "reason": "Never verified"
+    },
+    {
+      "ticker": "MARA",
+      "field": "quarterly_burn_usd",
+      "reason": "Never verified"
+    },
+    {
+      "ticker": "RIOT",
+      "field": "holdings",
+      "reason": "Never verified"
+    },
+    {
+      "ticker": "RIOT",
+      "field": "quarterly_burn_usd",
+      "reason": "Never verified"
+    },
+    {
+      "ticker": "CLSK",
+      "field": "holdings",
+      "reason": "Never verified"
+    },
+    {
+      "ticker": "CLSK",
+      "field": "quarterly_burn_usd",
+      "reason": "Never verified"
+    },
+    {
+      "ticker": "HUT",
+      "field": "holdings",
+      "reason": "Never verified"
+    },
+    {
+      "ticker": "HUT",
+      "field": "quarterly_burn_usd",
+      "reason": "Never verified"
+    },
+    {
+      "ticker": "ASST",
+      "field": "holdings",
+      "reason": "Never verified"
+    },
+    {
+      "ticker": "ASST",
+      "field": "quarterly_burn_usd",
+      "reason": "Never verified"
+    },
+    {
+      "ticker": "BITF",
+      "field": "holdings",
+      "reason": "Never verified"
+    },
+    {
+      "ticker": "BITF",
+      "field": "quarterly_burn_usd",
+      "reason": "Never verified"
+    },
+    {
+      "ticker": "WULF",
+      "field": "holdings",
+      "reason": "Never verified"
+    },
+    {
+      "ticker": "WULF",
+      "field": "quarterly_burn_usd",
+      "reason": "Never verified"
+    },
+    {
+      "ticker": "KULR",
+      "field": "holdings",
+      "reason": "Never verified"
+    },
+    {
+      "ticker": "KULR",
+      "field": "quarterly_burn_usd",
+      "reason": "Never verified"
+    },
+    {
+      "ticker": "CIFR",
+      "field": "holdings",
+      "reason": "Never verified"
+    },
+    {
+      "ticker": "CIFR",
+      "field": "quarterly_burn_usd",
+      "reason": "Never verified"
+    },
+    {
+      "ticker": "FWDI",
+      "field": "holdings",
+      "reason": "Never verified"
+    },
+    {
+      "ticker": "FWDI",
+      "field": "staking_pct",
+      "reason": "Never verified"
+    },
+    {
+      "ticker": "FWDI",
+      "field": "quarterly_burn_usd",
+      "reason": "Never verified"
+    },
+    {
+      "ticker": "HSDT",
+      "field": "holdings",
+      "reason": "Never verified"
+    },
+    {
+      "ticker": "HSDT",
+      "field": "staking_pct",
+      "reason": "Never verified"
+    },
+    {
+      "ticker": "HSDT",
+      "field": "quarterly_burn_usd",
+      "reason": "Never verified"
+    },
+    {
+      "ticker": "DFDV",
+      "field": "holdings",
+      "reason": "Never verified"
+    },
+    {
+      "ticker": "DFDV",
+      "field": "staking_pct",
+      "reason": "Never verified"
+    },
+    {
+      "ticker": "DFDV",
+      "field": "quarterly_burn_usd",
+      "reason": "Never verified"
+    },
+    {
+      "ticker": "UPXI",
+      "field": "holdings",
+      "reason": "Never verified"
+    },
+    {
+      "ticker": "UPXI",
+      "field": "staking_pct",
+      "reason": "Never verified"
+    },
+    {
+      "ticker": "UPXI",
+      "field": "quarterly_burn_usd",
+      "reason": "Never verified"
+    },
+    {
+      "ticker": "HODL",
+      "field": "holdings",
+      "reason": "Never verified"
+    },
+    {
+      "ticker": "HODL",
+      "field": "staking_pct",
+      "reason": "Never verified"
+    },
+    {
+      "ticker": "HODL",
+      "field": "quarterly_burn_usd",
+      "reason": "Never verified"
+    }
+  ]
+}
